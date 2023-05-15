@@ -5,6 +5,7 @@ import { fallbackNoImage } from "../app/utils";
 import { getTokenDetailInfo } from "../app/unique";
 import Layout from "../app/layout";
 import NestingVizTree from "../app/common/NestingVizTree";
+import Loader from "../app/common/Loader";
 
 function Detail() {
     const {
@@ -65,7 +66,7 @@ function Detail() {
     if (Object.keys(tokenDetail).length === 0) {
         return (
             <Layout>
-                <div>...</div>
+                <Loader />
             </Layout>
         );
     }

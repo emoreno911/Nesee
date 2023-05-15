@@ -150,7 +150,6 @@ export const mintRefungibleToken = async (account) => {
 export const getTokenDetailInfo = async (account, collectionId, tokenId) => {
     const { sdk, address } = getWalletClient(account);
 
-    console.log(sdk)
     const tokenDetail = await sdk.token.get({ collectionId, tokenId });
 
     const bundleInfo = await sdk.token.getBundle({
@@ -161,6 +160,17 @@ export const getTokenDetailInfo = async (account, collectionId, tokenId) => {
 
     return { tokenDetail, bundleInfo };
 };
+
+export const getBundleInfo = async (account, collectionId, tokenId) => {
+    const { sdk, address } = getWalletClient(account);
+
+    const bundleInfo = await sdk.token.getBundle({
+        collectionId,
+        tokenId,
+    });
+
+    return bundleInfo;
+}
 
 // nest nfts
 

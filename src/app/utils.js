@@ -26,3 +26,28 @@ export const dataURItoBlob = (dataURI) => {
 	
 	return [blob, mimeString];
 }
+
+export const unrollBundle = (bundle) => {
+	const arr = [];
+	const getNodes = (children, parentCollection, parentId) => {
+		children.forEach((el) => {
+			const { tokenId, collectionId, nestingChildTokens } = el;
+			const isBundle = el.hasOwnProperty('nestingChildTokens');
+			if (isBundle)
+				getNodes(nestingChildTokens, collectionId, tokenId);
+
+			arr.push({ tokenId, collectionId, parentCollection, parentId, isBundle });
+		});
+	};
+
+	// set main node
+	arr.push({tokenId: bundle.tokenId, collectionId: bundle.collectionId, parentCollection: 0, parentId: 0, isBundle:true});
+	// get children nodes
+	getNodes(
+		bundle.nestingChildTokens,
+		bundle.collectionId,
+		bundle.tokenId
+	);
+	
+	return arr;
+};

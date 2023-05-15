@@ -23,7 +23,7 @@ export const useDatacontext = () => useContext(DataContext);
 const DataContextProvider = (props) => {
     const [balance, setBalance] = useState({});
     const [accounts, setAccounts] = useState([]);
-    const [currentAccountIndex, setCurrentAccountIndex] = useState(0);
+    const [currentAccountIndex, setCurrentAccountIndex] = useState(1);
     const [loaderMessage, setLoaderMessage] = useState(null);
 
     useEffect(() => {

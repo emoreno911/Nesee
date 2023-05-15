@@ -47,39 +47,13 @@ export const tokensQuery = (owner = null, c_filter = null) => {
             timestamp
             data {
               collection_id
-			  collection_name
+			        collection_name
               token_id
               token_name
               image
-			  children_count
-			  type
+			        children_count
+			        type
             }
           }
     }`;
 }
-
-
-export const tokensQueryOLD = (owner, c_filter = [376]) =>
-    `query {
-        tokens(
-            where: {
-              owner_normalized: {_eq: "${owner}"},
-              collection_id: {_in: ${JSON.stringify(c_filter)}}
-            },
-            order_by: {collection_id: desc, token_id: asc}
-            offset: 0
-            limit: 10
-          ) {
-            count
-            timestamp
-            data {
-              collection_id
-			  collection_name
-              token_id
-              token_name
-              image
-			  children_count
-			  type
-            }
-          }
-    }`;
