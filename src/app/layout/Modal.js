@@ -1,10 +1,10 @@
 import { createPortal } from 'react-dom'
 
-const ModalControlled = ({ children, activator, show, handleShow, addBackdrop = true }) => {
+const ModalControlled = ({ children, activator, show, handleShow, addBackdrop = true, maxWidth = "lg" }) => {
   const content = (
     <div className={`modal-window ${show ? 'open' : ''}`}>
       { addBackdrop && <div className="modal-backdrop" onClick={() => handleShow(false)}></div> }
-			<div className="max-w-lg max-h-screen overflow-auto mx-3">
+			<div className={`max-w-${maxWidth} max-h-screen overflow-auto mx-3`}>
 				<button title="Close" className="modal-close noselect" onClick={() => handleShow(false)}>
 					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />

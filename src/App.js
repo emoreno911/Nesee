@@ -8,6 +8,7 @@ import Playground from './pages/playground';
 import FullLoader from './app/layout/FullLoader';
 import BundleEditor from './pages/bundleEditor';
 import Wallet from './pages/wallet';
+import Customizer from './pages/customizer';
 
 const client = new QueryClient();
 
@@ -22,6 +23,7 @@ function App() {
                   <Route path="/playground" render={(props) => <Playground {...props} />} />
                   <Route path="/bundle-editor" render={(props) => <BundleEditor {...props} />} />
                   <Route path="/wallet" render={(props) => <Wallet {...props} />} />
+                  <Route path="/customizer" render={(props) => <Customizer {...props} />} />
               </Switch>
           </HashRouter>
           <FullLoader />
