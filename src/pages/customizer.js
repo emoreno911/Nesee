@@ -25,14 +25,16 @@ function Customizer() {
 
     const getData = async () => {
         const account = accounts[currentAccountIndex];
+        if (!account) return;
+
         const _bundle = await getBundleInfo(account, 590, 2);
         const tree = unrollBundle(_bundle);
         setBundleTree(tree);
     }
 
-    useEffect(() => {
+    useEffect(() => {       
         getData()
-    }, [])
+    }, [accounts])
 
     return (
         <Layout>

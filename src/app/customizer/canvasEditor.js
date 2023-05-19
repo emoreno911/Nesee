@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react"; // ^18.2.0 (modificar y probar)
 import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
+import { Flipper, Flipped } from 'react-flip-toolkit';
 import Button from "../common/Button";
 
 const faces = [
-    {id: "500_1", title: "Monke #1", url: "https://icons.iconarchive.com/icons/google/noto-emoji-animals-nature/72/22211-monkey-face-icon.png"},
-    {id: "500_2", title: "Shib #2", url: "https://icons.iconarchive.com/icons/google/noto-emoji-animals-nature/72/22214-dog-face-icon.png"},
-    {id: "500_3", title: "Wolf #3", url: "https://icons.iconarchive.com/icons/google/noto-emoji-animals-nature/72/22217-wolf-face-icon.png"},
-    {id: "500_4", title: "Leo #4", url: "https://icons.iconarchive.com/icons/google/noto-emoji-animals-nature/72/22222-lion-face-icon.png"}
+    {id: "375_1", title: "BEE #1", url: "https://ipfs.unique.network/ipfs/QmW2qrgvt6o2Tar3mXepLAGfu3F8rSqjuAKGLwrWWwkTqa"},
+    {id: "375_2", title: "BEE #2", url: "https://ipfs.unique.network/ipfs/Qmaizukx4FZ7FzfTHbU61pWfZcJ4B9ngN6Sw4sv7MYrLjw"},
+    {id: "375_3", title: "BEE #3", url: "https://ipfs.unique.network/ipfs/QmRm9AhdyeX7dtZsxwLRCMzhg2yot6yuaqT66VC1pq5Kzh"},
+    {id: "376_5", title: "LRT #5", url: "https://ipfs.unique.network/ipfs/QmSjkPY3Na5uhCryJYYKypfzq69uem6BK6Qx2m3njiaYib"}
 ]
 
 const CanvasEditor = () => {
@@ -28,21 +29,33 @@ const CanvasEditor = () => {
     }, []);
 
     const showElems = () => {
-        console.log(editor.canvas.getObjects())
+        console.log(editor.canvas.toObject())
+    }
+
+    const clearCanvas = () => {
+        editor.canvas.clear();
+        updateCanvasItems();
+    }
+
+    const exportImage = () => {
+        const imgB64 = editor.canvas.toDataURL('png');
+        //console.log(img)
+        var win = window.open();
+        win.document.write(`<iframe src="${imgB64}" frameborder="0" style="width:100%; height:100%;" allowfullscreen> </iframe>`);
     }
 
     const saveJSON = () => {
         const ids = editor.canvas.getObjects().map(({nftid, title}) => ({ nftid, title })); // get ids and titles
         const {version, objects} = editor.canvas.toObject(); 
         const objsWithPropsFiltered = objects.map((o, i) => {
-            let {type,version,originX,originY,left,top,width,height,scaleX,scaleY,angle,flipX,flipY,opacity,visible,src} = o;
-            return {...ids[i],type,version,originX,originY,left,top,width,height,scaleX,scaleY,angle,flipX,flipY,opacity,visible,src}
+            let {type,version,originX,originY,left,top,width,height,scaleX,scaleY,angle,flipX,flipY,opacity,visible,src,crossOrigin} = o;
+            return {...ids[i],type,version,originX,originY,left,top,width,height,scaleX,scaleY,angle,flipX,flipY,opacity,visible,src,crossOrigin}
         })
 
         const result = { version, objects: objsWithPropsFiltered };
         const b64result = btoa(JSON.stringify(result));
         window.localStorage.setItem("bundle", b64result);
-        console.log("saved to local storage");
+        console.log("saved to local storage", b64result);
     }
 
     const loadJSON = () => {
@@ -75,8 +88,11 @@ const CanvasEditor = () => {
         fabric.Image.fromURL(url, (oImg) => { 
             oImg.nftid = id; 
             oImg.title = title;
+            //oImg.set({ height: 128 })
             editor.canvas.add(oImg); 
-        })
+        },
+        { crossOrigin: 'anonymous' }
+        )
     }
 
     const toggleCanvasImage = (img) => {
@@ -109,15 +125,19 @@ const CanvasEditor = () => {
                     <FabricJSCanvas className="h-full" onReady={onReady} />
                 </div>
                 <div className="bg-blue-100 w-full sm:w-1/3 lg:w-1/4">
+                    <Flipper flipKey={canvasItems.map(o => o.nftid).join('')}>
                     <div>
                         {canvasItems.map(({nftid, title}) => (
-                            <div key={nftid} className="text-xs w-full border border-gray-600 mb-2">   
-                                <button className="bg-blue-400 py-1 px-2" onClick={() => layerUp(nftid)}>U</button>
-                                <button className="bg-purple-400 py-1 px-2 mr-1" onClick={() => layerDown(nftid)}>D</button>
-                                <span>{title}</span>
-                            </div>
+                            <Flipped key={nftid} flipId={nftid} stagger>
+                                <div className="text-xs w-full border border-gray-600 mb-2">   
+                                    <button className="bg-blue-400 py-1 px-2" onClick={() => layerUp(nftid)}>U</button>
+                                    <button className="bg-purple-400 py-1 px-2 mr-1" onClick={() => layerDown(nftid)}>D</button>
+                                    <span>{title}</span>
+                                </div>
+                            </Flipped>
                         ))}
                     </div>
+                    </Flipper>
                 </div>
             </div>
             <div>
@@ -132,8 +152,12 @@ const CanvasEditor = () => {
                         </button>
                     ))}
                 </div>
-                <Button color="blue" onClick={() => showElems()}>
-                    List Elems
+                <Button color="red" onClick={() => clearCanvas()}>
+                    Clear
+                </Button>
+                {" "}
+                <Button color="blue" onClick={() => exportImage()}>
+                    Export
                 </Button>
                 {" "}
                 <Button color="green" onClick={() => saveJSON()}>

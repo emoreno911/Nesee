@@ -29,11 +29,11 @@ function Header() {
                 <div className="flex items-center justify-between py-4">
                     <Link to="/">
                         <div className="flex items-center">
-                            <span className="font-raleway text-4xl font-bold text-gray-900">
-                                nes
+                            <span className="font-raleway text-4xl font-bold text-gray-900" title="font: Raleway Heavy">
+                                NES 
                             </span>
                             <img
-                                className="w-auto h-12 mt-1 -ml-1"
+                                className="w-auto h-14 mt-0 -ml-1"
                                 src="/ico-color.svg"
                                 alt="Nesee logo"
                             />
