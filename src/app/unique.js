@@ -1,5 +1,6 @@
 import Sdk from "@unique-nft/sdk";
 import { KeyringProvider } from "@unique-nft/accounts/keyring";
+import {SchemaTools} from '@unique-nft/schemas';
 import { baseNetworkURL } from "./utils";
 
 export const getWalletClient = (account) => {
@@ -44,6 +45,7 @@ export const createCollection = async (account) => {
         tokenPrefix: "HONX",
         //schema: collectionSchema,
         permissions: {
+            mintMode: true,
             nesting: {
                 tokenOwner: true,
                 collectionAdmin: true,
@@ -262,32 +264,175 @@ const collectionSchema = {
     schemaName: 'unique',
     schemaVersion: '1.0.0',
   
-    image: {
-      urlTemplate: 'https://gateway.pinata.cloud/ipfs/{infix}'
-    },
-  
+    image: { urlTemplate: 'https://ipfs.unique.network/ipfs/{infix}' },
     coverPicture: {
-      ipfsCid: 'QmNiBHiAhsjBXj5cXShDUc5q1dX23CJYrqGGPBNjQCCSXQ'
+        ipfsCid: 'QmQCYzPwa5N4T4GGY4r5P7ybAPsiZ5YeNpzX6ikw8JAjfW',
     },
   
     attributesSchemaVersion: '1.0.0',
     attributesSchema: {
-      0: {
-        name: {_: 'cid'},
-        type: "string",
-        optional: true,
-        isArray: false,
-      },
-      1: {
-        name: {_: 'type'},
-        type: "string",
-        optional: false,
-        isArray: false,
-        enumValues: {
-          0: {_: 'node'},
-          1: {_: 'campaign'},
-          2: {_: 'customer'},
-        }
-      }
+        0: {
+            name: {_: 'type'},
+            type: "string",
+            optional: false,
+            isArray: false,
+            enumValues: {
+                0: {_: 'background'},
+                1: {_: 'none'}
+            }
+        },
+        1: {
+            name: {_: 'name'},
+            type: "string",
+            optional: true,
+            isArray: false,
+        },
+        2: {
+            name: {_: 'composition'},
+            type: "string",
+            optional: true,
+            isArray: false,
+        } 
     },
-  }
+}
+
+export const createLiveCollection = async (account) => {
+    const { sdk, address } = getWalletClient(account);
+
+    console.log("creating live collection...");
+    
+    const result = await sdk.collection.create.submitWaitResult({
+        address,
+        name: "Live Caspers 4",
+        description: "Updateable collection",
+        tokenPrefix: "CAS4",
+        schema: collectionSchema,
+        permissions: {
+            mintMode: true,
+            nesting: {
+                tokenOwner: true,
+                collectionAdmin: true,
+            },
+        },
+        tokenPropertyPermissions: [
+            {
+              key: 'a.0',
+              permission: {
+                tokenOwner: true,
+                collectionAdmin: true,
+                mutable: true,
+              },
+            },
+            {
+              key: 'a.1',
+              permission: {
+                tokenOwner: true,
+                collectionAdmin: true,
+                mutable: true,
+              },
+            },
+            {
+                key: 'a.2',
+                permission: {
+                  tokenOwner: true,
+                  collectionAdmin: true,
+                  mutable: true,
+                },
+            },
+            {
+                key: 'i.c',
+                permission: {
+                  tokenOwner: true,
+                  collectionAdmin: true,
+                  mutable: true,
+                },
+            }
+        ]
+    },
+    { signer: account }
+    );
+
+    if (result.error) {
+        console.log("Error occurred while creating a collection. ", result.error);
+        return null;
+    }
+
+    console.log(result)
+    
+    /*const { collectionId } = parsed;
+
+    const collection = await sdk.collections.get({ collectionId });
+    console.log("new collection", collection);
+    return collectionId;*/
+};
+
+export const mintLiveNFT = async (account, attrs, _collectionId, ipfsCid) => {
+    // const client = new Sdk({ baseUrl: 'https://rest.unique.network/opal/v1' });
+    // const file = fs.readFileSync(`./your_picture.png`);
+    // const { fullUrl, cid } = await client.ipfs.uploadFile({ file });
+
+    console.log('minting live nft...')
+    const { sdk, address } = getWalletClient(account);
+
+    // const createTokenArgs = {
+    //     address,
+    //     collectionId: _collectionId,
+    //     data: {
+    //         encodedAttributes: attrs,
+    //         image: {
+    //             ipfsCid: ipfsCid,
+    //         },
+    //     },
+    // };
+
+    const tokenProperties = SchemaTools.encodeUnique.token({
+        image: {
+            ipfsCid: 'QmQCYzPwa5N4T4GGY4r5P7ybAPsiZ5YeNpzX6ikw8JAjfW',
+        },
+        encodedAttributes: {
+          0: 1,
+          1: {_: 'test name'},
+        }
+      }, collectionSchema)
+
+    const result = await sdk.token.create.submitWaitResult(
+        {
+            address,
+            collectionId: 1589,
+            properties: tokenProperties,
+        }, 
+        {signer: account}
+    );
+
+    if (result.error) {
+        console.log("Error occurred while minting. ", result.error);
+        return null;
+    }
+    else {
+        console.log(result)
+    }
+    
+
+    // const { collectionId, tokenId } = parsed;
+    // const token = await sdk.token.get({ collectionId, tokenId });
+    // console.log("new token", token);
+    // return tokenId;
+};
+
+export const setProperties = async (account) => {
+    const { sdk, address } = getWalletClient(account);
+    const opts = {
+        address,
+        collectionId: 1589,
+        tokenId: 1,
+        properties: [
+            //{ key: "a.0", value: "0"},
+            //{ key: "a.1", value: '{"_":"Day BG"}' }
+            { key: "i.c", value: 'QmSwfJJnhmAseGTaki1Z8ao6jG8k9pp9nSyXkeHaYqYGMM' }
+        ]
+    }
+
+    const result = await sdk.token.setProperties.submitWaitResult(opts, { signer: account });
+
+    console.log(result);
+}

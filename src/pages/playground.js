@@ -12,7 +12,10 @@ import {
     mintRefungibleToken,
     mintNewBundle,
     nestRftTokens,
-    setPermissions
+    setPermissions,
+    setProperties,
+    createLiveCollection,
+    mintLiveNFT
 } from "../app/unique";
 
 const Button = ({ children, onClick, color = "pink" }) => (
@@ -31,7 +34,7 @@ function Playground() {
     } = useDatacontext();
 
     const account = accounts[currentAccountIndex]
-    const [collectionId, setCollectionId] = useState(590); //useState(500); //useState(486);
+    const [collectionId, setCollectionId] = useState(1575); //useState(500); //useState(486);
 
     const mintNewLoyaltyBundle = () => {
         console.log("minting...", accounts[currentAccountIndex]);
@@ -62,6 +65,20 @@ function Playground() {
         );
     };
 
+    const updateLiveNFT = () => {
+        console.log('Updating properties...')
+        setProperties(account)
+    }
+
+    const newLiveCollection = () => {
+        createLiveCollection(account);
+    }
+
+    const mintLiveToken = () => {
+        const attrs = [0, 'Test 1'];
+        mintLiveNFT(account, attrs, 1577, 'QmSwfJJnhmAseGTaki1Z8ao6jG8k9pp9nSyXkeHaYqYGMM')
+    }
+
     return (
         <Layout>
             <h2 className="text-gray-500 font-bold text-xl my-4">Playground</h2>
@@ -81,14 +98,14 @@ function Playground() {
                     </li>
                 </ul>
                 <div className="pt-0">
-                    <Button onClick={mintNewLoyaltyBundle}>
-                        New Loyalty Bundle
+                    <Button onClick={() => updateLiveNFT()}>
+                        Update Live NFT
                     </Button>{" "}
-                    <Button color="blue" onClick={() => createCollection(account)}>
-                        New RFT Collection
+                    <Button color="blue" onClick={() => newLiveCollection(account)}>
+                        New Live Collection
                     </Button>{" "}
-                    <Button color="blue" onClick={mintNewRFT}>
-                        New RFT Token
+                    <Button color="blue" onClick={() => mintLiveToken()}>
+                        Mint Live Token
                     </Button>{" "}
                     <Button color="yellow" onClick={() => setPermissions(account)}>
                         Nest Tokens

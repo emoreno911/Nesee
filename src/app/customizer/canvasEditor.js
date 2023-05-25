@@ -4,16 +4,28 @@ import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 import { Flipper, Flipped } from 'react-flip-toolkit';
 import Button from "../common/Button";
 
-const faces = [
-    {id: "375_1", title: "BEE #1", url: "https://ipfs.unique.network/ipfs/QmW2qrgvt6o2Tar3mXepLAGfu3F8rSqjuAKGLwrWWwkTqa"},
-    {id: "375_2", title: "BEE #2", url: "https://ipfs.unique.network/ipfs/Qmaizukx4FZ7FzfTHbU61pWfZcJ4B9ngN6Sw4sv7MYrLjw"},
-    {id: "375_3", title: "BEE #3", url: "https://ipfs.unique.network/ipfs/QmRm9AhdyeX7dtZsxwLRCMzhg2yot6yuaqT66VC1pq5Kzh"},
-    {id: "376_5", title: "LRT #5", url: "https://ipfs.unique.network/ipfs/QmSjkPY3Na5uhCryJYYKypfzq69uem6BK6Qx2m3njiaYib"}
+const parts = [
+    {id: "375_13", title: "BODY #1", url: "/nft/body.png"},
+    {id: "375_1", title: "MOUTH #1", url: "/nft/mouth1.png"},
+    {id: "375_2", title: "MOUTH #2", url: "/nft/mouth2.png"},
+    {id: "375_3", title: "MOUTH #3", url: "/nft/mouth3.png"},
+    {id: "375_4", title: "MOUTH #4", url: "/nft/mouth4.png"},
+    {id: "375_5", title: "EYES #1", url: "/nft/eyes1.png"},
+    {id: "375_6", title: "EYES #2", url: "/nft/eyes2.png"},
+    {id: "375_7", title: "EYES #3", url: "/nft/eyes3.png"},
+    {id: "375_8", title: "EYES #4", url: "/nft/eyes4.png"},
+    {id: "375_9", title: "HAT #1", url: "/nft/hat1.png"},
+    {id: "375_10", title: "HAT #2", url: "/nft/hat2.png"},
+    {id: "375_11", title: "HAT #3", url: "/nft/hat3.png"},
+    {id: "375_12", title: "HAT #4", url: "/nft/hat4.png"},
+    {id: "375_14", title: "BACK #1", url: "/nft/bg1.jpg"},
+    {id: "375_15", title: "BACK #2", url: "/nft/bg2.jpg"},
+    {id: "375_16", title: "BACK #3", url: "/nft/bg3.jpg"},
 ]
 
 const CanvasEditor = () => {
     const [ canvasItems, setCanvasItems ] = useState([]);
-    const [ elems, setElems ] = useState(faces);
+    const [ elems, setElems ] = useState(parts);
     const { selectedObjects, editor, onReady } = useFabricJSEditor();
 
     useEffect(() => {
@@ -35,6 +47,11 @@ const CanvasEditor = () => {
     const clearCanvas = () => {
         editor.canvas.clear();
         updateCanvasItems();
+    }
+
+    const deselectCurrentObject = () => {
+        editor.canvas.discardActiveObject()
+        editor.canvas.renderAll()
     }
 
     const exportImage = () => {
@@ -141,18 +158,18 @@ const CanvasEditor = () => {
                 </div>
             </div>
             <div>
-                <div className="flex">
+                <div className="flex flex-wrap">
                     {elems.map(({title, url, id}) => (
                         <button 
                             key={id} 
-                            className={`w-full rounded-md border border-gray-600 m-2 px-2 py-1 ${canvasIncludes(id) ? 'bg-pink-200 border-pink-600' : ''}`}
+                            className={`rounded-md border border-gray-600 m-2 px-2 py-1 ${canvasIncludes(id) ? 'bg-pink-200 border-pink-600' : ''}`}
                             onClick={() => toggleCanvasImage({url, id, title})}
                         >
                             <span>{title}</span>
                         </button>
                     ))}
                 </div>
-                <Button color="red" onClick={() => clearCanvas()}>
+                <Button color="red" onClick={() => deselectCurrentObject()}>
                     Clear
                 </Button>
                 {" "}
