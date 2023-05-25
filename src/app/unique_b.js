@@ -131,7 +131,7 @@ export const createDynamicCollection = async (account) => {
     return collectionId;
 }
 
-export const mintDynamicNFT = async (account, collectionId, ipfsCid, props) => {
+export const mintDynamicNft = async (account, collectionId, ipfsCid, props) => {
     // const client = new Sdk({ baseUrl: 'https://rest.unique.network/opal/v1' });
     // const file = fs.readFileSync(`./your_picture.png`);
     // const { fullUrl, cid } = await client.ipfs.uploadFile({ file });
