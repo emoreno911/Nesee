@@ -41,7 +41,7 @@ export const tokensQuery = (owner = null, c_filter = null) => {
             },
             order_by: {collection_id: desc, token_id: asc}
             offset: 0
-            limit: 20
+            limit: 50
           ) {
             count
             timestamp

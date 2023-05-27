@@ -2,20 +2,11 @@ import React, {
     createContext,
     useState,
     useEffect,
-    useContext,
-    useId,
+    useContext
 } from "react";
 import { Polkadot } from "@unique-nft/utils/extension";
 import Sdk from "@unique-nft/sdk";
 import { baseNetworkURL } from "./utils";
-import {
-    createCollection,
-    mintNewBundle,
-    mintRefungibleToken,
-    nestRftTokens,
-	getPiecesCount,
-	sendAirdrop
-} from "./unique";
 
 const DataContext = createContext();
 export const useDatacontext = () => useContext(DataContext);
@@ -23,7 +14,7 @@ export const useDatacontext = () => useContext(DataContext);
 const DataContextProvider = (props) => {
     const [balance, setBalance] = useState({});
     const [accounts, setAccounts] = useState([]);
-    const [currentAccountIndex, setCurrentAccountIndex] = useState(1);
+    const [currentAccountIndex, setCurrentAccountIndex] = useState(0);
     const [loaderMessage, setLoaderMessage] = useState(null);
 
     useEffect(() => {
@@ -43,7 +34,6 @@ const DataContextProvider = (props) => {
 
         const balance = await sdk.balance.get({ address: account.address });
         setBalance(balance.availableBalance);
-        console.log(account);
 
         setAccounts(result.accounts);
     };
@@ -79,6 +69,7 @@ const DataContextProvider = (props) => {
         isMobile,
         initAccountWithWallet,
         switchWalletAccount,
+        setLoaderMessage
     };
 
     return (

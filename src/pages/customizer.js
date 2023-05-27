@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDatacontext } from "../app/context";
 import Layout from "../app/layout";
 import NestingEditor from "../app/editor/NestingEditor";
-import { getBundleInfo } from "../app/unique";
+import { getBundleInfo } from "../unique/service";
 import { unrollBundle } from "../app/utils";
 import ModalCustomize from "../app/customizer/ModalCustomize";
 

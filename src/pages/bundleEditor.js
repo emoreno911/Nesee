@@ -3,12 +3,12 @@ import _ from "lodash";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useDatacontext } from "../app/context";
-import { graphqlEndpoint, tokensQuery } from "../app/queries";
+import { graphqlEndpoint, tokensQuery } from "../unique/queries";
 import Layout from "../app/layout";
 import Loader from "../app/common/Loader";
 import EmptyState from "../app/common/EmptyState";
 import NestingEditor from "../app/editor/NestingEditor";
-import { getBundleInfo } from "../app/unique";
+import { getBundleInfo } from "../unique/service";
 import { unrollBundle } from "../app/utils";
 
 

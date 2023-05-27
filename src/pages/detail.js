@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDatacontext } from "../app/context";
 import { fallbackNoImage } from "../app/utils";
-import { getTokenDetailInfo } from "../app/unique";
+import { getTokenDetailInfo } from "../unique/service";
 import Layout from "../app/layout";
 import NestingVizTree from "../app/common/NestingVizTree";
 import Loader from "../app/common/Loader";
@@ -102,11 +102,11 @@ function Detail() {
                                 Attributes
                             </span>
                         </div>
-                        <table className="table- text-left">
+                        <table className="table- text-left w-full">
                             <tbody>
                                 {Object.keys(tokenDetail.attributes).map(
                                     (key) => (
-                                        <tr>
+                                        <tr key={key}>
                                             <th>
                                                 {
                                                     tokenDetail.attributes[key]
@@ -114,10 +114,12 @@ function Detail() {
                                                 }
                                             </th>
                                             <td className="pl-2">
-                                                {
-                                                    tokenDetail.attributes[key]
-                                                        .value._
-                                                }
+                                                <input 
+                                                    readOnly 
+                                                    type="text" 
+                                                    className="w-full outline-0"  
+                                                    value={tokenDetail.attributes[key].value._} 
+                                                />
                                             </td>
                                         </tr>
                                     )

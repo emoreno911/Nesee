@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useQuery } from "react-query";
-import { graphqlEndpoint, collectionsQuery } from "../queries";
+import { graphqlEndpoint, collectionsQuery } from "../../unique/queries";
 import EmptyState from "./EmptyState";
 import Loader from "./Loader";
 import CollectionCard from "./CollectionCard";

@@ -3203,9 +3203,9 @@
     zod "^3.21.4"
 
 "@unique-nft/sdk@^0.2.5":
-  version "0.2.13"
-  resolved "https://registry.yarnpkg.com/@unique-nft/sdk/-/sdk-0.2.13.tgz#3122de8dab5ff97ce9646e5423c41f8d8346e8e5"
-  integrity sha512-WSVfOnlW5Ry/cjlGFBfvDujoNOCq0pkvmq8dF+F6TxSEOHounQpGTi1R3ALtjjwEgarzsjO7E5eXOcfmz7QJnQ==
+  version "0.2.16"
+  resolved "https://registry.yarnpkg.com/@unique-nft/sdk/-/sdk-0.2.16.tgz#daa7099e43e80e0e186d0d43812335d1086f7fb6"
+  integrity sha512-RTpUZqMh7dDp4vNusrl44hDNGW6S4t9itEWZc1MK+gPx+vNYskgoSMqWjtMb/P6GH25O3AA8TBKL8C7uQ9riKQ==
   dependencies:
     abi-coder "^4.1.1"
     axios "^0.27.2"
@@ -5074,9 +5074,9 @@ engine.io-client@~6.4.0:
     xmlhttprequest-ssl "~2.0.0"
 
 engine.io-parser@~5.0.3:
-  version "5.0.6"
-  resolved "https://registry.yarnpkg.com/engine.io-parser/-/engine.io-parser-5.0.6.tgz#7811244af173e157295dec9b2718dfe42a64ef45"
-  integrity sha512-tjuoZDMAdEhVnSFleYPCtdL2GXwVTGtNjoeJd9IhIG3C1xs9uwxqRNEu5WpnDZCaozwVlK/nuQhpodhXSIMaxw==
+  version "5.0.7"
+  resolved "https://registry.yarnpkg.com/engine.io-parser/-/engine.io-parser-5.0.7.tgz#ed5eae76c71f398284c578ab6deafd3ba7e4e4f6"
+  integrity sha512-P+jDFbvK6lE3n1OL+q9KuzdOFWkkZ/cMV9gol/SbVfpyqfvrfrFTOFJ6fQm2VC3PZHlU3QPhVwmbsCnauHF2MQ==
 
 enhanced-resolve@^5.14.0:
   version "5.14.0"
@@ -9765,9 +9765,9 @@ socket.io-client@^4.5.4:
     socket.io-parser "~4.2.1"
 
 socket.io-parser@~4.2.1:
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/socket.io-parser/-/socket.io-parser-4.2.2.tgz#1dd384019e25b7a3d374877f492ab34f2ad0d206"
-  integrity sha512-DJtziuKypFkMMHCm2uIshOYC7QaylbtzQwiMYDuCKy3OPkjLzu4B2vAhTlqipRHHzrI0NJeBAizTK7X+6m1jVw==
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/socket.io-parser/-/socket.io-parser-4.2.3.tgz#926bcc6658e2ae0883dc9dee69acbdc76e4e3667"
+  integrity sha512-JMafRntWVO2DCJimKsRTh/wnqVvO4hrfwOqtO7f+uzwsQMuxO6VwImtYxaQ+ieoyshWOTJyV0fA21lccEXRPpQ==
   dependencies:
     "@socket.io/component-emitter" "~3.1.0"
     debug "~4.3.1"
