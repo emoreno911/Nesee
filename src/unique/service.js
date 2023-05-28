@@ -206,18 +206,18 @@ export const setNftProperties = async (
 };
 
 export const nestTokens = async (account, nestArgs) => {
-    const { parentCollection, parentToken, childCollection, childToken } = nestArgs;
+    const { parentCollection, parentId, childCollection, childId } = nestArgs;
     const { sdk, address } = getWalletClient(account);
 
     const args = {
         address,
         parent: {
             collectionId: parentCollection,
-            tokenId: parentToken,
+            tokenId: parentId,
         },
         nested: {
             collectionId: childCollection,
-            tokenId: childToken,
+            tokenId: childId,
         },
     };
 
@@ -235,18 +235,18 @@ export const nestTokens = async (account, nestArgs) => {
 };
 
 export const unNestTokens = async (account, nestArgs) => {
-    const { parentCollection, parentToken, childCollection, childToken } = nestArgs;
+    const { parentCollection, parentId, childCollection, childId } = nestArgs;
     const { sdk, address } = getWalletClient(account);
 
     const args = {
         address,
         parent: {
             collectionId: parentCollection,
-            tokenId: parentToken,
+            tokenId: parentId,
         },
         nested: {
             collectionId: childCollection,
-            tokenId: childToken,
+            tokenId: childId,
         },
     };
 

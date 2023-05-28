@@ -5,17 +5,18 @@ import { useQuery } from "react-query";
 import { useDatacontext } from "../app/context";
 import { graphqlEndpoint, tokensQuery } from "../unique/queries";
 import Layout from "../app/layout";
-import Loader from "../app/common/Loader";
 import EmptyState from "../app/common/EmptyState";
 import NestingEditor from "../app/editor/NestingEditor";
-import { getBundleInfo } from "../unique/service";
+import { getBundleInfo, nestTokens, unNestTokens } from "../unique/service";
 import { unrollBundle } from "../app/utils";
 
 
-function EditorContainer({ account }) {
+function EditorContainer({ account, setLoaderMessage }) {
     const owner = account.address;
+    const [dataAvailable, setDataAvailable] = useState(false);
     const [bundle, setBundle] = useState([]);
     const { data, isLoading, error } = useQuery("tokens", async () => {
+        if (dataAvailable) return;
         return axios({
             url: graphqlEndpoint,
             method: "POST",
@@ -28,6 +29,8 @@ function EditorContainer({ account }) {
     useEffect(() => {
         if (!data) return;
 
+        if (dataAvailable) return;
+
         const _data = data.tokens.data.map(o => {
             const tokenId = o.token_id;
             const collectionId = o.collection_id;
@@ -37,7 +40,7 @@ function EditorContainer({ account }) {
             const tokenName = o.token_name;
             const image = o.image.fullUrl;
             const nodeId = `${collectionId}_${tokenId}`;
-            return { nodeId, tokenName, tokenId, collectionId, parentCollection, parentId, isBundle }
+            return { nodeId, tokenName, tokenId, collectionId, parentCollection, parentId, isBundle, image }
         })
 
         const _bundles = _data.filter(o => o.isBundle).map(o => getBundleInfo(account, o.collectionId, o.tokenId));
@@ -54,32 +57,66 @@ function EditorContainer({ account }) {
             })
 
             const res = _.unionBy(arr, _data, 'nodeId')
-            console.log('arr', values)
+            console.log('arr', res)
 
             setBundle(res)
+            setDataAvailable(true)
         })
 
         //setBundle(_data);
     }, [data])
 
-    if (isLoading) return <Loader />;
+    if (isLoading) return null;
     if (error) return <EmptyState style="mx-8" message={error.message} />;
 
-    const rebuildTree = (data) => {
+    const nestAndRebuild = async (updatedTree, nestArgs) => {
         setBundle([])
-        console.log(data)
+        //console.log(data)
+        setLoaderMessage("Nesting token...")
+        const result = await nestTokens(account, nestArgs);
+        if (result !== null) {
+            setLoaderMessage("Token nested successfully...")
+            setBundle(updatedTree)
+        }
+        else {
+            setLoaderMessage("Something went wrong, try again!")
+        }
+
         setTimeout(() => {
-            setBundle(data)
-        }, 500);
+            setLoaderMessage(null)
+        }, 1500);
     }
 
-    return <NestingEditor treeData={bundle} rebuildTree={rebuildTree} />
+    const unnestAndRebuild = async (updatedTree, nestArgs) => {
+        setBundle([])
+        setLoaderMessage("Unnesting token...")
+        const result = await unNestTokens(account, nestArgs);
+        if (result !== null) {
+            setLoaderMessage("Token unnested successfully...")
+            setBundle(updatedTree)
+        }
+        else {
+            setLoaderMessage("Something went wrong, try again!")
+        }
+
+        setTimeout(() => {
+            setLoaderMessage(null)
+        }, 1500);
+    }
+
+    return (
+        <NestingEditor 
+            treeData={bundle} 
+            nestAndRebuild={nestAndRebuild} 
+            unnestAndRebuild={unnestAndRebuild}
+        />
+    )
 }
 
 function BundleEditor() {
     const {
         data: { accounts, currentAccountIndex },
-        fn: {},
+        fn: { setLoaderMessage },
     } = useDatacontext();
 
     return (
@@ -91,7 +128,11 @@ function BundleEditor() {
                 className="w-full shadow-md border border-white bg-white rounded my-4"
                 style={{ height: "500px" }}
             >
-                { accounts.length > 0 ? <EditorContainer account={accounts[currentAccountIndex]} /> : <div></div> }
+                { 
+                    accounts.length > 0 ? 
+                        <EditorContainer account={accounts[currentAccountIndex]} setLoaderMessage={setLoaderMessage} /> 
+                        : <div></div> 
+                }
             </div>
         </Layout>
     );

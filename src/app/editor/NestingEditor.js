@@ -3,13 +3,15 @@ import ReactFlow, {
     addEdge,
     ConnectionLineType,
     useReactFlow,
+    Panel,
+    MiniMap,
     useNodesState,
     useEdgesState,
 } from "reactflow";
 import dagre from "dagre";
-import NestingVizNode from "../common/NestingVizNode";
+import NestingEditorNode from "./NestingEditorNode";
+import Button from "../common/Button";
 import "reactflow/dist/style.css";
-import Loader from "../common/Loader";
 
 const formatTreeData = (data) => {
     const position = { x: 0, y: 0 };
@@ -29,21 +31,29 @@ const formatTreeData = (data) => {
 };
 
 const nodeTypes = {
-    custom: NestingVizNode,
+    custom: NestingEditorNode,
 };
 
 // check if target is a child of node
 const isChildNode = (target, node) => {
-    console.log(target.data.parentId,node.data.tokenId,target.data.parentCollection,node.data.collectionId)
-    return target.data.parentId === node.data.tokenId && target.data.parentCollection === node.data.collectionId
-}
+    console.log(
+        target.data.parentId,
+        node.data.tokenId,
+        target.data.parentCollection,
+        node.data.collectionId
+    );
+    return (
+        target.data.parentId === node.data.tokenId &&
+        target.data.parentCollection === node.data.collectionId
+    );
+};
 
 const getLayoutedElements = (nodes, edges, direction = "TB") => {
     const dagreGraph = new dagre.graphlib.Graph();
     dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-    const nodeWidth = 172;
-    const nodeHeight = 50;
+    const nodeWidth = 200;
+    const nodeHeight = 80;
 
     const isHorizontal = direction === "LR";
     dagreGraph.setGraph({ rankdir: direction });
@@ -76,12 +86,15 @@ const getLayoutedElements = (nodes, edges, direction = "TB") => {
     return { nodes, edges };
 };
 
-const NestingEditor = ({ treeData, rebuildTree }) => {
+const NestingEditor = ({ treeData, nestAndRebuild, unnestAndRebuild }) => {
     // this ref stores the current dragged node
     const dragRef = useRef(null);
 
     // target is the node that the node is dragged over
     const [target, setTarget] = useState(null);
+
+    // currentNode is the last selected node
+    const [currentNode, setCurrentNode] = useState(null);
 
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -103,56 +116,137 @@ const NestingEditor = ({ treeData, rebuildTree }) => {
         dragRef.current = node;
     };
 
-    const onNodeDrag = useCallback((evt, node) => {
-        // calculate the center point of the node from position and dimensions
-        const centerX = node.position.x + node.width / 2;
-        const centerY = node.position.y + node.height / 2;
+    const onNodeDrag = useCallback(
+        (evt, node) => {
+            // calculate the center point of the node from position and dimensions
+            const centerX = node.position.x + node.width / 2;
+            const centerY = node.position.y + node.height / 2;
 
-        // find a node where the center point is inside
-        const targetNode = nodes.find(
-            (n) =>
-                centerX > n.position.x &&
-                centerX < n.position.x + n.width &&
-                centerY > n.position.y &&
-                centerY < n.position.y + n.height &&
-                n.id !== node.id // this is needed, ote draggedherwise we would always find th node
-        );
+            // find a node where the center point is inside
+            const targetNode = nodes.find(
+                (n) =>
+                    centerX > n.position.x &&
+                    centerX < n.position.x + n.width &&
+                    centerY > n.position.y &&
+                    centerY < n.position.y + n.height &&
+                    n.id !== node.id // this is needed, ote draggedherwise we would always find th node
+            );
 
-        setTarget(targetNode);
-    }, [nodes]);
+            setTarget(targetNode);
+        },
+        [nodes]
+    );
 
-    const onNodeDragStop = useCallback((evt, node) => {
-        console.log(target, node)
-        if (!target) return
-        // on drag stop, we update the three
+    const onNodeDragStop = useCallback(
+        (evt, node) => {
+            //console.log(target, node)
+            if (!target) return;
+            // on drag stop, we update the three
 
-        if (isChildNode(target, node)) {
-            console.log("this node can't be child of its child")
-            return;
-        }
-
-        const updatedNodes = nodes.map((n) => {
-            if (n.id === dragRef.current.id && target) {
-                n.data = {
-                    ...node.data,
-                    parentId: target.data.tokenId,
-                    parentCollection: target.data.collectionId,
-                    isHighlight: false,
-                };
-            } else {
-                n.data = { ...n.data, isHighlight: false };
+            if (isChildNode(target, node)) {
+                console.log("this node can't be child of its child");
+                return;
             }
 
-            return n.data;
-        })
+            const { tokenId: parentId, collectionId: parentCollection } =
+                target.data;
+            const { tokenId: childId, collectionId: childCollection } =
+                node.data;
 
-        //console.log(updatedNodes)
+            const updatedNodes = nodes.map((n) => {
+                if (n.id === dragRef.current.id && target) {
+                    n.data = {
+                        ...node.data,
+                        parentId: target.data.tokenId,
+                        parentCollection: target.data.collectionId,
+                        isHighlight: false,
+                    };
+                } else {
+                    n.data = { ...n.data, isHighlight: false };
+                }
 
-        setTarget(null);
-        dragRef.current = null;
-        rebuildTree(updatedNodes)
+                return n.data;
+            });
 
-    },[nodes, edges, target]);
+            setTarget(null);
+            dragRef.current = null;
+            nestAndRebuild(updatedNodes, {
+                parentId,
+                parentCollection,
+                childId,
+                childCollection,
+            });
+        },
+        [nodes, edges, target]
+    );
+
+    const onNodeClick = useCallback(
+        (evt, _node) => {
+            setNodes((nodes) =>
+                nodes.map((node) => {
+                    if (node.id === _node.id) {
+                        node.data = {
+                            ...node.data,
+                            isSelected: true,
+                        };
+                    } else {
+                        node.data = { ...node.data, isSelected: false };
+                    }
+                    return node;
+                })
+            );
+
+            //console.log(_node);
+            setCurrentNode(_node);
+        },
+        [nodes]
+    );
+
+    const handleUnnest = async () => {
+        const isConfirm = window.confirm(
+            `Do you want to Unnest the #${currentNode.data.tokenId} token?`
+        );
+        if (!isConfirm) return;
+
+        const updatedNodes = nodes.map((node) => {
+            if (node.id === currentNode.id) {
+                node.data = {
+                    ...node.data,
+                    parentId: 0,
+                    parentCollection: 0,
+                    isSelected: false,
+                };
+            }
+            return node.data;
+        });
+
+        const {
+            parentCollection,
+            parentId,
+            tokenId: childId,
+            collectionId: childCollection,
+        } = currentNode.data;
+        await unnestAndRebuild(updatedNodes, {
+            parentCollection,
+            parentId,
+            childCollection,
+            childId,
+        });
+        setCurrentNode(null);
+    };
+
+    const unnestEnabled = () => {
+        if (currentNode === null) return false;
+        return (
+            currentNode.data.parentCollection !== 0 &&
+            currentNode.data.parentId !== 0
+        );
+    };
+
+    const bundleSelected = () => {
+        if (currentNode === null) return false;
+        return currentNode.data.isBundle;
+    };
 
     useEffect(() => {
         // whenever the target changes, we swap the colors temporarily
@@ -174,25 +268,73 @@ const NestingEditor = ({ treeData, rebuildTree }) => {
         );
     }, [target]);
 
-    const control = nodes.length < 1 ? <div className="relative h-full flex items-center justify-center"><Loader /></div> : (
-        <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            //onConnect={onConnect}
-            //connectionLineType={ConnectionLineType.SmoothStep}
-            nodeTypes={nodeTypes}
-            nodesDraggable={true}
-            zoomOnScroll={true}
-            panOnDrag={true}
-            fitView
-            className="bg-blue-100"
-            onNodeDragStart={onNodeDragStart}
-            onNodeDrag={onNodeDrag}
-            onNodeDragStop={onNodeDragStop}
-        />
-    )
+    const control =
+        nodes.length < 1 ? (
+            <div className="relative h-full flex items-center justify-center">
+                Processing...
+            </div>
+        ) : (
+            <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                //onConnect={onConnect}
+                //connectionLineType={ConnectionLineType.SmoothStep}
+                nodeTypes={nodeTypes}
+                nodesDraggable={true}
+                zoomOnScroll={true}
+                panOnDrag={true}
+                fitView
+                className="bg-blue-100"
+                onNodeClick={onNodeClick}
+                onNodeDragStart={onNodeDragStart}
+                onNodeDrag={onNodeDrag}
+                onNodeDragStop={onNodeDragStop}
+            >
+                <MiniMap pannable />
+                <Panel position="topleft">
+                    {currentNode !== null ? (
+                        <Button>Detail Page</Button>
+                    ) : null}
+                    {unnestEnabled() ? (
+                        <Button color="orange" onClick={() => handleUnnest()}>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={2}
+                                stroke="currentColor"
+                                className="inline mr-1 w-3 h-3"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3"
+                                />
+                            </svg>
+                            <span>Unnest</span>
+                        </Button>
+                    ) : null}
+                    {bundleSelected() ? (
+                        <Button color="blue">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={2}
+                                stroke="currentColor"
+                                className="inline w-3 h-3 mr-1"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
+                            </svg>
+
+                            <span>Customizer</span>
+                        </Button>
+                    ) : null}
+                </Panel>
+            </ReactFlow>
+        );
 
     return control;
 };
