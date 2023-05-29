@@ -17,7 +17,13 @@ const DataContextProvider = (props) => {
     const [currentAccountIndex, setCurrentAccountIndex] = useState(0);
     const [loaderMessage, setLoaderMessage] = useState(null);
 
+    // currentNode is the last selected node in nestingEditor
+    const [currentNode, setCurrentNode] = useState(null);
+
     useEffect(() => {
+        const polkaAccountIndex = window.localStorage.getItem("polkaAccountIndex");
+        if (polkaAccountIndex !== null) setCurrentAccountIndex(parseInt(polkaAccountIndex));
+
         setTimeout(() => {
             initAccountWithWallet();
         }, 1500);
@@ -48,6 +54,7 @@ const DataContextProvider = (props) => {
         const balance = await sdk.balance.get({ address: account.address });
         setBalance(balance.availableBalance);
         setCurrentAccountIndex(newIndex);
+        window.localStorage.setItem("polkaAccountIndex", newIndex)
     };
 
     
@@ -59,6 +66,7 @@ const DataContextProvider = (props) => {
     };
 
     const data = {
+        currentNode,
         loaderMessage,
         currentAccountIndex,
         accounts,
@@ -69,7 +77,8 @@ const DataContextProvider = (props) => {
         isMobile,
         initAccountWithWallet,
         switchWalletAccount,
-        setLoaderMessage
+        setLoaderMessage,
+        setCurrentNode
     };
 
     return (

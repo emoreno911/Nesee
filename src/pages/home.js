@@ -8,10 +8,10 @@ function Home() {
                     <div>
                         <div className="flex items-center">
                             <span className="text-4xl font-bold text-gray-900">
-                                nes
+                                NES
                             </span>
                             <img
-                                className="w-auto h-12 mt-1 -ml-1"
+                                className="w-auto h-14 -ml-1"
                                 src="/ico-color.svg"
                                 alt="Nesee logo"
                             />
@@ -30,7 +30,7 @@ function Home() {
                                 <p className="sm:pl-2.5 text-base font-black tracking-tight text-gray-800 sm:text-lg">
                                     &nbsp;
                                 </p>
-                                <Link to="/playground">
+                                <Link to="/wallet">
                                     <button className="bg-blue-500 text-white uppercase font-bold text-lg w-full py-3 px-6 my-3 rounded-md">
                                         START HERE
                                     </button>

@@ -3,12 +3,24 @@ import _ from "lodash";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useDatacontext } from "../app/context";
-import { graphqlEndpoint, tokensQuery } from "../unique/queries";
+import { collectionsFilterQuery, graphqlEndpoint, tokensQuery } from "../unique/queries";
 import Layout from "../app/layout";
 import EmptyState from "../app/common/EmptyState";
 import NestingEditor from "../app/editor/NestingEditor";
 import { getBundleInfo, nestTokens, unNestTokens } from "../unique/service";
 import { unrollBundle } from "../app/utils";
+
+const getCollectionsInfo = async (filter) => {
+    const response = await axios({
+        url: graphqlEndpoint,
+        method: "POST",
+        data: {
+            query: collectionsFilterQuery(filter),
+        },
+    });
+
+    return response.data.data;
+}
 
 
 function EditorContainer({ account, setLoaderMessage }) {
@@ -58,9 +70,25 @@ function EditorContainer({ account, setLoaderMessage }) {
 
             const res = _.unionBy(arr, _data, 'nodeId')
             console.log('arr', res)
+            
+            const uniqCollections = _.uniq(res.map(o => o.collectionId));
+            getCollectionsInfo(uniqCollections)
+            .then(response => {
+                if (!response.collections) return;
 
-            setBundle(res)
-            setDataAvailable(true)
+                const x = res.map(o => {
+                    const c = response.collections.data.find(c => c.collection_id === o.collectionId)
+                    o.tokenName = `${c.token_prefix} #${o.tokenId}`;
+                    return o;
+                })
+
+                setBundle(res)
+                setDataAvailable(true)                
+            })
+            .catch(err => {
+                console.log("error", err)
+            })
+   
         })
 
         //setBundle(_data);

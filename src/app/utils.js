@@ -1,9 +1,8 @@
 export const ipfsBundleImage = "QmY3XC4Twr62QcMz2StdQZsrrffYKuyimscfM6acA6yCwf";
 export const ipfsTicketImage = "Qmbw957mpvrK6ARp1Uq7taLYRCJaakuaw3p42bAZkPDv9Z";
-export const fallbackNoImage =
-    "https://via.placeholder.com/300/444444/FFFFFF/?text=IMG"; //"https://wallet.unique.network/static/media/empty-image.06dd29a7fc6c895e8369e8f0bb5780b2.svg";
-export const formFieldStyle =
-    "w-full bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline";
+export const fallbackNoImage = "/images/noimage.svg";
+export const strokeButtonStyle =
+    "bg-white text-gray-700 uppercase font-bold text-xs py-1 px-3 mr-1 rounded-sm border border-gray-700";
 
 export const appMetadata = {
     name: "NESEE",

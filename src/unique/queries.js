@@ -27,6 +27,28 @@ export const collectionsQuery = (owner) =>
       }
     `;
 
+export const collectionsFilterQuery = (filter) =>
+    `query {
+        collections(
+          where: {
+            collection_id: {_in: ${JSON.stringify(filter)}}
+          },
+          order_by: {collection_id: asc}
+          offset: 0
+          limit: 10
+        ) {
+          count
+          timestamp
+          data {
+            collection_id
+            token_prefix
+            name
+            collection_cover
+          }
+        }
+      }
+    `;
+
 
 export const tokensQuery = (owner = null, c_filter = null) => {
 	const owner_filter = owner === null ? "" : `owner_normalized: {_eq: "${owner}"}`;

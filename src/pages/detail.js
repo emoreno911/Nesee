@@ -20,12 +20,14 @@ function Detail() {
     const [bundleInfo, setBundleInfo] = useState([]);
 
     useEffect(() => {
-        getDetails();
-    }, [tokenInfo]);
+        getDetails()
+    }, [tokenInfo, accounts]);
 
     const getDetails = async () => {
-        console.log(type, collectionId, tokenId)
+        //console.log(type, collectionId, tokenId)
         const account = accounts[currentAccountIndex];
+        if (!account) return;
+
         const { tokenDetail, bundleInfo } = await getTokenDetailInfo(
             account,
             collectionId,

@@ -3,6 +3,8 @@ import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 import { Flipper, Flipped } from 'react-flip-toolkit';
 import Button from "../common/Button";
+import { useDatacontext } from "../context";
+import { getBundleInfo } from "../../unique/service";
 
 const parts = [
     {id: "375_13", title: "BODY #1", url: "/nft/body.png"},
@@ -28,17 +30,26 @@ const CanvasEditor = () => {
     const [ elems, setElems ] = useState(parts);
     const { selectedObjects, editor, onReady } = useFabricJSEditor();
 
+    const {
+        data: { accounts, currentAccountIndex, currentNode }
+    } = useDatacontext()
+
     useEffect(() => {
         if (!editor) return;
 
-        // fabric.Image.fromURL(
-        //     "https://icons.iconarchive.com/icons/google/noto-emoji-animals-nature/72/22215-dog-icon.png",
-        //     (oImg) => {
-        //         editor.canvas.add(oImg);
-        //         console.log('add dog!', oImg)
-        //     }
-        // );
-    }, []);
+        updateData();        
+    }, [currentNode]);
+
+    const updateData = async () => {
+        const account = accounts[currentAccountIndex];
+        const { collectionId, tokenId, isBundle } = currentNode.data;
+
+        if (isBundle) {
+            const result = await getBundleInfo(account, collectionId, tokenId)
+            console.log("data", result);
+        }
+        
+    }
 
     const showElems = () => {
         console.log(editor.canvas.toObject())
