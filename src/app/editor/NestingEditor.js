@@ -167,7 +167,15 @@ const NestingEditor = ({ treeData, nestAndRebuild, unnestAndRebuild }) => {
                         parentCollection: target.data.collectionId,
                         isHighlight: false,
                     };
-                } else {
+                } 
+                // else if (n.id === target.data.id) {
+                //     n.data = {
+                //         ...n.data,
+                //         isBundle: true,
+                //         isHighlight: false
+                //     }
+                // }
+                else {
                     n.data = { ...n.data, isHighlight: false };
                 }
 

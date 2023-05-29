@@ -14,6 +14,7 @@ import  {
     checkAdminList,
     sendAirdrop
 } from "../unique/service"
+import { backgrounds } from "../unique/data";
 
 const Button = ({ children, onClick, color = "pink" }) => (
     <button
@@ -32,7 +33,7 @@ function Playground() {
 
     const account = accounts[currentAccountIndex]
     const [collectionId, setCollectionId] = useState(1589);
-    const [currentTokenId, setCurrentTokenId ] = useState(2);
+    const [currentTokenId, setCurrentTokenId ] = useState(11);
 
     const handleNesting = () => {
         console.log("nesting tokens...")
@@ -53,8 +54,27 @@ function Playground() {
             currentTokenId,
             [
                 //{ key: "a.0", value: `1` },
-                { key: "a.1", value: `{"_":"Rand ${Date.now()}"}` },
+                //{ key: "a.1", value: `{"_":"Rand ${Date.now()}"}` },
                 //{ key: "i.c", value: 'QmQCYzPwa5N4T4GGY4r5P7ybAPsiZ5YeNpzX6ikw8JAjfW' }
+            ]
+        )
+        console.log(result)
+        setLoaderMessage(null)
+    }
+
+    const updateLiveBackground = async () => {
+        const res = await getTokenDetailInfo(account, collectionId, currentTokenId)
+        const ipfsCid = res.tokenDetail.image.ipfsCid;
+        const newImage = backgrounds.filter(b => b.ipfs !== ipfsCid);
+
+        console.log('Updating properties...', currentTokenId)
+        setLoaderMessage("updating properties...")
+        const result = await setNftProperties(
+            account,
+            collectionId,
+            currentTokenId,
+            [
+                { key: "i.c", value: newImage[0].ipfs }
             ]
         )
         console.log(result)
@@ -99,6 +119,7 @@ function Playground() {
     }
 
     const handleOnboarding = async () => {
+        return;
         // send airdrop
         setLoaderMessage("sending onboard airdrop...")
         if (parseInt(balance.amount) < 10) {
@@ -149,7 +170,7 @@ function Playground() {
                     <Button color="blue" onClick={() => mintLiveToken()}>
                         Mint Live Token
                     </Button>{" "}
-                    <Button onClick={() => updateLiveNFT()}>
+                    <Button onClick={() => updateLiveBackground()}>
                         Update Live NFT
                     </Button>{" "}
                     <Button color="red" onClick={() => handleAllowList()}>

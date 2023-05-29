@@ -8,7 +8,7 @@ const ModalCustomize = () => {
 
 	return (
 		<Modal
-            maxWidth="3xl"
+            maxWidth="5xl"
             show={isShow}
             handleShow={setIsShow}
 			activator={({ handleShow }) => (
@@ -28,7 +28,7 @@ const ModalCustomize = () => {
                 </Button>
             )}
 		>
-			<div className="bg-white text-gray-700 pt-4 pb-8 px-8 rounded-md" style={{width: "600px"}}>
+			<div className="bg-white text-gray-700 pt-4 pb-8 px-8 rounded-md" style={{width: "800px"}}>
 				<h4 className=" text-lg mb-6 font-semibold">Customize Bundle Image</h4>
                 <CanvasEditor />
 			</div>

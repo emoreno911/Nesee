@@ -34,6 +34,7 @@ export const unrollBundle = (bundle) => {
         children.forEach((el) => {
             const {
                 tokenId,
+                attributes,
                 collectionId,
                 nestingChildTokens,
                 image: { fullUrl },
@@ -43,6 +44,7 @@ export const unrollBundle = (bundle) => {
             if (isBundle) getNodes(nestingChildTokens, collectionId, tokenId);
 
             arr.push({
+                attributes,
                 tokenId,
                 collectionId,
                 parentCollection,
@@ -55,6 +57,7 @@ export const unrollBundle = (bundle) => {
 
     // set main node
     arr.push({
+        attributes: bundle.attributes,
         tokenId: bundle.tokenId,
         collectionId: bundle.collectionId,
         parentCollection: 0,

@@ -1,33 +1,20 @@
-import { useEffect, useState } from "react"; // ^18.2.0 (modificar y probar)
+import { useEffect, useState } from "react";
+import axios from "axios";
+import _ from "lodash";
 import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 import { Flipper, Flipped } from 'react-flip-toolkit';
-import Button from "../common/Button";
 import { useDatacontext } from "../context";
 import { getBundleInfo } from "../../unique/service";
+import { unrollBundle } from "../utils";
+import Button from "../common/Button";
+import { graphqlEndpoint, tokensQueryB } from "../../unique/queries";
 
-const parts = [
-    {id: "375_13", title: "BODY #1", url: "/nft/body.png"},
-    {id: "375_1", title: "MOUTH #1", url: "/nft/mouth1.png"},
-    {id: "375_2", title: "MOUTH #2", url: "/nft/mouth2.png"},
-    {id: "375_3", title: "MOUTH #3", url: "/nft/mouth3.png"},
-    {id: "375_4", title: "MOUTH #4", url: "/nft/mouth4.png"},
-    {id: "375_5", title: "EYES #1", url: "/nft/eyes1.png"},
-    {id: "375_6", title: "EYES #2", url: "/nft/eyes2.png"},
-    {id: "375_7", title: "EYES #3", url: "/nft/eyes3.png"},
-    {id: "375_8", title: "EYES #4", url: "/nft/eyes4.png"},
-    {id: "375_9", title: "HAT #1", url: "/nft/hat1.png"},
-    {id: "375_10", title: "HAT #2", url: "/nft/hat2.png"},
-    {id: "375_11", title: "HAT #3", url: "/nft/hat3.png"},
-    {id: "375_12", title: "HAT #4", url: "/nft/hat4.png"},
-    {id: "375_14", title: "BACK #1", url: "/nft/bg1.jpg"},
-    {id: "375_15", title: "BACK #2", url: "/nft/bg2.jpg"},
-    {id: "375_16", title: "BACK #3", url: "/nft/bg3.jpg"},
-]
 
 const CanvasEditor = () => {
     const [ canvasItems, setCanvasItems ] = useState([]);
-    const [ elems, setElems ] = useState(parts);
+    const [ nextElem, setNextElem ] = useState({});
+    const [ elems, setElems ] = useState([]);
     const { selectedObjects, editor, onReady } = useFabricJSEditor();
 
     const {
@@ -37,7 +24,8 @@ const CanvasEditor = () => {
     useEffect(() => {
         if (!editor) return;
 
-        updateData();        
+        //updateData();
+        getDemoElements();
     }, [currentNode]);
 
     const updateData = async () => {
@@ -45,10 +33,47 @@ const CanvasEditor = () => {
         const { collectionId, tokenId, isBundle } = currentNode.data;
 
         if (isBundle) {
-            const result = await getBundleInfo(account, collectionId, tokenId)
-            console.log("data", result);
-        }
-        
+            const bundle = await getBundleInfo(account, collectionId, tokenId);
+            const data = unrollBundle(bundle);
+            console.log("data", data);
+
+            const els = data.map(el => {
+                el.id = `${el.collectionId}_${el.tokenId}`;
+                el.title = `${el.collectionId}#${el.tokenId}`;
+                el.url = el.image;
+                return el
+            })
+            setElems(els);
+            //clearCanvas();
+        }  
+    }
+
+    const getDemoElements = async () => {
+        const response = await axios({
+            url: graphqlEndpoint,
+            method: "POST",
+            data: {
+                query: tokensQueryB(null, [1575, 1589]),
+            },
+        });
+    
+        const res = response.data.data;
+        const elems = res.tokens.data.map(el => {
+            el.id = `${el.collection_id}_${el.token_id}`;
+            el.title = `${el.token_name}`;
+            el.url = el.image.fullUrl;
+
+            // find the attribute named "type"
+            //el.type = el.attributes[0].value._ // the easy way if attr[0] == type
+            const attr = Object.keys(el.attributes).map(k => el.attributes[k]).find(attr => attr.name._ === "type")
+            el.type = attr ? attr.value._ : 'none'
+
+            return el
+        })
+
+        const groupedElems = _.groupBy(elems, 'type')
+        //console.log(groupedElems)
+        setElems(groupedElems)
     }
 
     const showElems = () => {
@@ -58,6 +83,7 @@ const CanvasEditor = () => {
     const clearCanvas = () => {
         editor.canvas.clear();
         updateCanvasItems();
+        setNextElem({});
     }
 
     const deselectCurrentObject = () => {
@@ -73,7 +99,7 @@ const CanvasEditor = () => {
     }
 
     const saveJSON = () => {
-        const ids = editor.canvas.getObjects().map(({nftid, title}) => ({ nftid, title })); // get ids and titles
+        const ids = editor.canvas.getObjects().map(({nftid, title, nftype}) => ({ nftid, title, nftype })); // get ids and titles
         const {version, objects} = editor.canvas.toObject(); 
         const objsWithPropsFiltered = objects.map((o, i) => {
             let {type,version,originX,originY,left,top,width,height,scaleX,scaleY,angle,flipX,flipY,opacity,visible,src,crossOrigin} = o;
@@ -112,10 +138,11 @@ const CanvasEditor = () => {
         }
     }
 
-    const addImage = ({url, id, title}) => {
+    const addImage = ({url, id, title, type}) => {
         fabric.Image.fromURL(url, (oImg) => { 
             oImg.nftid = id; 
             oImg.title = title;
+            oImg.nftype = type;
             //oImg.set({ height: 128 })
             editor.canvas.add(oImg); 
         },
@@ -123,15 +150,26 @@ const CanvasEditor = () => {
         )
     }
 
-    const toggleCanvasImage = (img) => {
-        const index = editor.canvas.getObjects().findIndex(o => o.nftid === img.id);
+    const toggleCanvasImage = () => {
+        const {id, title, url, type} = nextElem;
+        const index = editor.canvas.getObjects().findIndex(o => o.nftid === id);
+        const replaceIndex = editor.canvas.getObjects().findIndex(o => o.nftype === type); // just one nft of each type
+
         if (index === -1) {
-            addImage(img)
+            if (replaceIndex !== -1) {
+                editor.canvas.remove(editor.canvas.item(replaceIndex))
+            }
+            addImage({id, title, url, type})
         } else {
             // remove
             editor.canvas.remove(editor.canvas.item(index))
         }
         updateCanvasItems();
+    }
+
+    const previewNextCanvasImage = (data) => {
+        deselectCurrentObject();
+        setNextElem(data);
     }
 
     const updateCanvasItems = (items = null) => {
@@ -148,53 +186,100 @@ const CanvasEditor = () => {
 
     return (
         <>
-            <div className="h-96 flex flex-col sm:flex-row">
-                <div className="bg-red-100 w-full sm:w-2/3 lg:w-3/4">
+            <div className="mb-2">
+                <Button onClick={() => deselectCurrentObject()}>
+                    Deselect
+                </Button>
+                {" "}
+                <Button onClick={() => clearCanvas()}>
+                    Clear
+                </Button>
+                {" "}
+                <Button onClick={() => exportImage()}>
+                    Export
+                </Button>
+                {" "}
+                <Button onClick={() => saveJSON()}>
+                    Save JSON
+                </Button>
+                {" "}
+                <Button onClick={() => loadJSON()}>
+                    Load JSON
+                </Button>
+                {" "}
+                <Button onClick={() => {}}>
+                    Regenerate Live
+                </Button>
+            </div>
+            <div className="h-96 flex flex-col sm:flex-row font-sans">
+                <div className="bg-gray-100 w-full lg:w-1/4 overflow-auto px-1">
+                    {Object.keys(elems).map(key => (
+                        <div key={key}>
+                            <h3 className="font-bold text-md capitalize">{key}</h3>
+                            {elems[key].map((el) => (
+                                <button 
+                                    key={el.id} 
+                                    type="button"
+                                    className={`block text-sm text-left w-full px-2 mb-2 ${canvasIncludes(el.id) ? 'bg-pink-200 border-pink-600' : ''}`}
+                                    onClick={() => previewNextCanvasImage(el)}
+                                >
+                                    <span>{el.title}</span>
+                                </button>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+                <div className="bg-red-100 w-full lg:w-2/4">
                     <FabricJSCanvas className="h-full" onReady={onReady} />
                 </div>
-                <div className="bg-blue-100 w-full sm:w-1/3 lg:w-1/4">
+                <div className="flex flex-col justify-between w-full lg:w-1/4 px-1">
                     <Flipper flipKey={canvasItems.map(o => o.nftid).join('')}>
                     <div>
                         {canvasItems.map(({nftid, title}) => (
                             <Flipped key={nftid} flipId={nftid} stagger>
-                                <div className="text-xs w-full border border-gray-600 mb-2">   
-                                    <button className="bg-blue-400 py-1 px-2" onClick={() => layerUp(nftid)}>U</button>
-                                    <button className="bg-purple-400 py-1 px-2 mr-1" onClick={() => layerDown(nftid)}>D</button>
+                                <div className="text-xs w-full border border-gray-600 bg-gray-100 rounded-sm mb-2">   
+                                    <button className="bg-blue-400 p-1" onClick={() => layerUp(nftid)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-3 h-3">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                                        </svg>
+                                    </button>
+                                    <button className="bg-purple-400 p-1 mr-1" onClick={() => layerDown(nftid)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-3 h-3">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    </button>
                                     <span>{title}</span>
                                 </div>
                             </Flipped>
                         ))}
                     </div>
                     </Flipper>
+                    <div title="preview next">
+                        { !nextElem.hasOwnProperty("id") ? null : (
+                            <div className={`flex items-center px-2 py-2 rounded-sm border-2 border-gray-600 bg-gray-100`}>
+                                <div className="w-12 h-12 text-lg bg-gray-100 relative">
+                                    <img src={nextElem.url} alt={nextElem.id} className="w-full h-full"/>
+                                    <div className="absolute w-full h-full left-0 top-0">
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleCanvasImage()}
+                                            className="w-full h-full text-xs bg-black/25 rounded-sm text-white px-1 px-3 flex justify-center items-center"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="ml-2 mb-1">
+                                    <div className="text-md font-bold">{nextElem.title}</div>
+                                    <div className="text-sm text-gray-400">{nextElem.type}</div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
-            <div>
-                <div className="flex flex-wrap">
-                    {elems.map(({title, url, id}) => (
-                        <button 
-                            key={id} 
-                            className={`rounded-md border border-gray-600 m-2 px-2 py-1 ${canvasIncludes(id) ? 'bg-pink-200 border-pink-600' : ''}`}
-                            onClick={() => toggleCanvasImage({url, id, title})}
-                        >
-                            <span>{title}</span>
-                        </button>
-                    ))}
-                </div>
-                <Button color="red" onClick={() => deselectCurrentObject()}>
-                    Clear
-                </Button>
-                {" "}
-                <Button color="blue" onClick={() => exportImage()}>
-                    Export
-                </Button>
-                {" "}
-                <Button color="green" onClick={() => saveJSON()}>
-                    Save JSON
-                </Button>
-                {" "}
-                <Button color="yellow" onClick={() => loadJSON()}>
-                    Load JSON
-                </Button>
             </div>
         </>
     );
