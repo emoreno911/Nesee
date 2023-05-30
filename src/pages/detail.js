@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDatacontext } from "../app/context";
-import { fallbackNoImage } from "../app/utils";
-import { getTokenDetailInfo } from "../unique/service";
+import { fallbackNoImage, isDynamicBackground, unrollBundle } from "../app/utils";
+import { getTokenDetailInfo, setNftProperties } from "../unique/service";
 import Layout from "../app/layout";
 import NestingVizTree from "../app/common/NestingVizTree";
 import Loader from "../app/common/Loader";
+import Button from "../app/common/Button";
+import { backgrounds } from "../unique/data";
 
 function Detail() {
     const {
         data: { accounts, currentAccountIndex },
-        fn: {  },
+        fn: { setLoaderMessage },
     } = useDatacontext();
 
     const { type, tokenInfo } = useParams();
@@ -37,33 +39,40 @@ function Detail() {
 
         console.log(bundleInfo);
         setTokenDetail(tokenDetail);
-        unroll(bundleInfo);
-    };
+        //unroll(bundleInfo);
 
-    const unroll = (bundle) => {
-        const arr = [];
-        const getNodes = (children, parentCollection, parentId) => {
-            children.forEach((el) => {
-                const { tokenId, collectionId, nestingChildTokens } = el;
-                const isBundle = el.hasOwnProperty('nestingChildTokens');
-                if (isBundle)
-                    getNodes(nestingChildTokens, collectionId, tokenId);
-
-                arr.push({ tokenId, collectionId, parentCollection, parentId, isBundle });
-            });
-        };
-
-        // set main node
-        arr.push({tokenId: bundle.tokenId, collectionId: bundle.collectionId, parentCollection: 0, parentId: 0, isBundle:true});
-        // get children nodes
-        getNodes(
-            bundle.nestingChildTokens,
-            bundle.collectionId,
-            bundle.tokenId
-        );
-        console.log(arr);
+        const arr = unrollBundle(bundleInfo);
         setBundleInfo(arr);
     };
+
+    const updateLiveBackground = async () => {
+        const isConfirm = window.confirm(
+            `Do you want to update this dynamic token?`
+        );
+        if (!isConfirm) return; 
+
+        const account = accounts[currentAccountIndex]
+        const ipfsCid = tokenDetail.image.ipfsCid;
+        const newImage = backgrounds.filter(b => b.ipfs !== ipfsCid);
+        const rand_0_1 = Date.now()%2;
+
+        console.log('Updating properties...', tokenId)
+        setLoaderMessage("updating properties...")
+        const result = await setNftProperties(
+            account,
+            collectionId,
+            tokenId,
+            [
+                { key: "a.1", value: `{"_":"${newImage[rand_0_1].title}"}` },
+                { key: "i.c", value: newImage[rand_0_1].ipfs }
+            ]
+        )
+        console.log(result)
+        setLoaderMessage(null)
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
+    }
 
     if (Object.keys(tokenDetail).length === 0) {
         return (
@@ -128,6 +137,17 @@ function Detail() {
                                 )}
                             </tbody>
                         </table>
+
+                        <div className="mt-4">  
+                            {!isDynamicBackground(collectionId, tokenDetail.attributes) ? "" : (
+                                <Button onClick={() => updateLiveBackground()}>
+                                    <span>Update Dynamic NFT</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="text-red-400 inline ml-2 w-4 h-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.348 14.651a3.75 3.75 0 010-5.303m5.304 0a3.75 3.75 0 010 5.303m-7.425 2.122a6.75 6.75 0 010-9.546m9.546 0a6.75 6.75 0 010 9.546M5.106 18.894c-3.808-3.808-3.808-9.98 0-13.789m13.788 0c3.808 3.808 3.808 9.981 0 13.79M12 12h.008v.007H12V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                    </svg>
+                                </Button>                                   
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -135,7 +155,6 @@ function Detail() {
                 Bundle Diagram
             </h2>
             <div className="w-full shadow-md border border-white bg-white rounded my-4" style={{height: "500px"}}>
-                {/* <pre>{JSON.stringify(bundleInfo, null, 2)}</pre> */}
                 <NestingVizTree treeData={bundleInfo} currentNode={{tokenId, collectionId}} />
             </div>
         </Layout>

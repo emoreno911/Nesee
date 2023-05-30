@@ -53,7 +53,7 @@ const CanvasEditor = () => {
             url: graphqlEndpoint,
             method: "POST",
             data: {
-                query: tokensQueryB(null, [1575, 1589]),
+                query: tokensQueryB(null, [1589]),
             },
         });
     
@@ -72,7 +72,6 @@ const CanvasEditor = () => {
         })
 
         const groupedElems = _.groupBy(elems, 'type')
-        //console.log(groupedElems)
         setElems(groupedElems)
     }
 
@@ -98,7 +97,7 @@ const CanvasEditor = () => {
         win.document.write(`<iframe src="${imgB64}" frameborder="0" style="width:100%; height:100%;" allowfullscreen> </iframe>`);
     }
 
-    const saveJSON = () => {
+    const getJSON = () => {
         const ids = editor.canvas.getObjects().map(({nftid, title, nftype}) => ({ nftid, title, nftype })); // get ids and titles
         const {version, objects} = editor.canvas.toObject(); 
         const objsWithPropsFiltered = objects.map((o, i) => {
@@ -107,6 +106,11 @@ const CanvasEditor = () => {
         })
 
         const result = { version, objects: objsWithPropsFiltered };
+        return result;
+    }
+
+    const saveJSON = () => {
+        const result = getJSON();
         const b64result = btoa(JSON.stringify(result));
         window.localStorage.setItem("bundle", b64result);
         console.log("saved to local storage", b64result);
@@ -167,6 +171,12 @@ const CanvasEditor = () => {
         updateCanvasItems();
     }
 
+    const removeCanvasElem = (id) => {
+        const index = editor.canvas.getObjects().findIndex(o => o.nftid === id);
+        editor.canvas.remove(editor.canvas.item(index));
+        updateCanvasItems();
+    }
+
     const previewNextCanvasImage = (data) => {
         deselectCurrentObject();
         setNextElem(data);
@@ -182,6 +192,24 @@ const CanvasEditor = () => {
 
     const canvasIncludes = (id) => {
         return canvasItems.map(o => o.nftid).includes(id);
+    }
+
+    const dynamicRegenerate = () => {
+        const json = getJSON();
+        const elements = Object.keys(elems).map(key => elems[key].map((el) => el));
+        const flatElems = _.flatten(elements);
+        const res = json.objects.map(o => {
+            const updated = flatElems.find(el => el.id === o.nftid);
+            if (updated) {
+                o.src = updated.url
+            }
+            return o;
+        })
+
+        editor.canvas.loadFromJSON({version: json.version, objects: res}, () => {
+            editor.canvas.renderAll();
+        });
+        //updateCanvasItems(res);
     }
 
     return (
@@ -207,7 +235,7 @@ const CanvasEditor = () => {
                     Load JSON
                 </Button>
                 {" "}
-                <Button onClick={() => {}}>
+                <Button onClick={() => dynamicRegenerate()}>
                     Regenerate Live
                 </Button>
             </div>
@@ -237,7 +265,7 @@ const CanvasEditor = () => {
                     <div>
                         {canvasItems.map(({nftid, title}) => (
                             <Flipped key={nftid} flipId={nftid} stagger>
-                                <div className="text-xs w-full border border-gray-600 bg-gray-100 rounded-sm mb-2">   
+                                <div className="flex text-xs w-full border border-gray-600 bg-gray-100 rounded-sm mb-2">   
                                     <button className="bg-blue-400 p-1" onClick={() => layerUp(nftid)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-3 h-3">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
@@ -248,7 +276,14 @@ const CanvasEditor = () => {
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                                         </svg>
                                     </button>
-                                    <span>{title}</span>
+                                    <div className="flex justify-between">
+                                        <span>{title}</span>
+                                        <button className="bg-red-400 p-1" onClick={() => removeCanvasElem(nftid)}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-3 h-3">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </Flipped>
                         ))}

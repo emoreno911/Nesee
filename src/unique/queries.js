@@ -68,6 +68,7 @@ export const tokensQuery = (owner = null, c_filter = null) => {
             count
             timestamp
             data {
+              attributes
               collection_id
 			        collection_name
               token_id
