@@ -28,7 +28,7 @@ const ModalCustomize = () => {
                 </Button>
             )}
 		>
-			<div className="bg-white text-gray-700 pt-4 pb-8 px-8 rounded-md" style={{width: "800px"}}>
+			<div className="bg-slate-800 text-gray-100 pt-4 pb-8 px-8 rounded-md" style={{width: "800px"}}>
 				<h4 className=" text-lg mb-6 font-semibold">Customize Bundle Image</h4>
                 <CanvasEditor />
 			</div>

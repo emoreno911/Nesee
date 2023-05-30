@@ -84,10 +84,10 @@ function Detail() {
 
     return (
         <Layout>
-            <h2 className="text-gray-500 font-bold text-xl my-4">
+            <h2 className="text-gray-100 font-semibold text-xl my-4">
                 Token Detail
             </h2>
-            <div className="relative w-full lg:max-w-full lg:flex my-2 p-4 shadow-md border border-white bg-white rounded my-4">
+            <div className="relative w-full lg:max-w-full lg:flex my-2 p-4 shadow-md border border-slate-900 bg-darkdeep rounded my-4">
                 <div className="flex items-center bg-cover text-center overflow-hidden">
                     <img
                         src={tokenDetail.image.fullUrl || fallbackNoImage}
@@ -100,10 +100,10 @@ function Detail() {
                         <span className="inline-block py-1 leading-none text-yellow-600 uppercase tracking-wide text-xs">
                             {type}
                         </span>
-                        <div className="text-gray-900 font-bold text-4xl">
+                        <div className="text-gray-100 font-bold text-4xl">
                             {tokenDetail.collection.tokenPrefix} #{tokenId}
                         </div>
-                        <div className="my-4">
+                        <div className="text-gray-100 my-4">
                             <span>{tokenDetail.collection.name}</span>{" "}
                             <span>({collectionId})</span>
                         </div>
@@ -113,7 +113,7 @@ function Detail() {
                                 Attributes
                             </span>
                         </div>
-                        <table className="table- text-left w-full">
+                        <table className="table text-gray-100 text-left w-full">
                             <tbody>
                                 {Object.keys(tokenDetail.attributes).map(
                                     (key) => (
@@ -128,7 +128,7 @@ function Detail() {
                                                 <input 
                                                     readOnly 
                                                     type="text" 
-                                                    className="w-full outline-0"  
+                                                    className="w-full bg-transparent outline-0"  
                                                     value={tokenDetail.attributes[key].value._} 
                                                 />
                                             </td>
@@ -151,10 +151,10 @@ function Detail() {
                     </div>
                 </div>
             </div>
-            <h2 className="text-gray-500 font-bold text-xl my-4">
+            <h2 className="text-gray-100 font-semibold text-xl my-4">
                 Bundle Diagram
             </h2>
-            <div className="w-full shadow-md border border-white bg-white rounded my-4" style={{height: "500px"}}>
+            <div className="w-full shadow-md border border-slate-900 bg-darkdeep rounded my-4" style={{height: "500px"}}>
                 <NestingVizTree treeData={bundleInfo} currentNode={{tokenId, collectionId}} />
             </div>
         </Layout>

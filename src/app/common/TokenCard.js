@@ -21,7 +21,7 @@ const TokenCard = ({
     return (
         <div className="w-full sm:w-1/2 md:w-1/3 xl:w-1/4 p-4">
             <Link to={linkTo}>
-                <div className="c-card block bg-white shadow-md hover:shadow-xl rounded-lg overflow-hidden">
+                <div className="c-card block bg-darkdeep shadow-md hover:shadow-xl rounded-lg overflow-hidden">
                     <div className="h-2 w-full">&nbsp;</div>
                     <div className="relative pb-48 overflow-hidden">
                         <img
@@ -32,7 +32,7 @@ const TokenCard = ({
                     </div>
                     <div className="p-4">
                         <div className="flex items-center justify-between">
-                            <h2 className="flex items-center my-1 text-black font-bold">
+                            <h2 className="flex items-center my-1 text-gray-100 font-bold">
                                 <span>{token_name}</span>
                                 <span className="inline text-red-400 ml-1" title="Dynamic Background">
                                     {!isDynamicBackground(collection_id, attributes) ? "" : (
@@ -53,7 +53,7 @@ const TokenCard = ({
                                 </span>
                             )}
                         </div>
-                        <span className="inline-block py-1 leading-none text-gray-500 uppercase tracking-wide text-xs">
+                        <span className="inline-block py-1 leading-none text-gray-400 uppercase tracking-wide text-xs">
                             {collection_name} ({collection_id})
                         </span>
                     </div>

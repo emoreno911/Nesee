@@ -53,7 +53,7 @@ const CanvasEditor = () => {
             url: graphqlEndpoint,
             method: "POST",
             data: {
-                query: tokensQueryB(null, [1589]),
+                query: tokensQueryB(null, [1575]), //1589,1575
             },
         });
     
@@ -212,6 +212,12 @@ const CanvasEditor = () => {
         //updateCanvasItems(res);
     }
 
+    const updateBundle = () => {
+        // const imgB64 = editor.canvas.toDataURL('png');
+        // const json = getJSON();
+        // const b64Json = btoa(JSON.stringify(json));
+    }
+
     return (
         <>
             <div className="mb-2">
@@ -227,28 +233,32 @@ const CanvasEditor = () => {
                     Export
                 </Button>
                 {" "}
-                <Button onClick={() => saveJSON()}>
+                {/* <Button onClick={() => saveJSON()}>
                     Save JSON
                 </Button>
                 {" "}
                 <Button onClick={() => loadJSON()}>
                     Load JSON
-                </Button>
-                {" "}
+                </Button> */}
+                
                 <Button onClick={() => dynamicRegenerate()}>
                     Regenerate Live
                 </Button>
+                {" "}
+                <Button onClick={() => saveJSON()}>
+                    Update Bundle
+                </Button>
             </div>
             <div className="h-96 flex flex-col sm:flex-row font-sans">
-                <div className="bg-gray-100 w-full lg:w-1/4 overflow-auto px-1">
+                <div className="w-full lg:w-1/4 overflow-auto px-1">
                     {Object.keys(elems).map(key => (
                         <div key={key}>
-                            <h3 className="font-bold text-md capitalize">{key}</h3>
+                            <h3 className="font-semibold text-yellow-600 text-md capitalize">{key}</h3>
                             {elems[key].map((el) => (
                                 <button 
                                     key={el.id} 
                                     type="button"
-                                    className={`block text-sm text-left w-full px-2 mb-2 ${canvasIncludes(el.id) ? 'bg-pink-200 border-pink-600' : ''}`}
+                                    className={`block text-sm text-left rounded-sm w-full px-2 mb-2 ${canvasIncludes(el.id) ? 'bg-slate-700 font-semibold border border-blue-400' : ''}`}
                                     onClick={() => previewNextCanvasImage(el)}
                                 >
                                     <span>{el.title}</span>
@@ -257,7 +267,7 @@ const CanvasEditor = () => {
                         </div>
                     ))}
                 </div>
-                <div className="bg-red-100 w-full lg:w-2/4">
+                <div className="bg-darkdeep w-full lg:w-2/4">
                     <FabricJSCanvas className="h-full" onReady={onReady} />
                 </div>
                 <div className="flex flex-col justify-between w-full lg:w-1/4 px-1">
@@ -265,7 +275,7 @@ const CanvasEditor = () => {
                     <div>
                         {canvasItems.map(({nftid, title}) => (
                             <Flipped key={nftid} flipId={nftid} stagger>
-                                <div className="flex text-xs w-full border border-gray-600 bg-gray-100 rounded-sm mb-2">   
+                                <div className="flex text-xs w-full border border-gray-600 bg-slate-700 rounded-sm mb-2">   
                                     <button className="bg-blue-400 p-1" onClick={() => layerUp(nftid)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-3 h-3">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
@@ -276,8 +286,8 @@ const CanvasEditor = () => {
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                                         </svg>
                                     </button>
-                                    <div className="flex justify-between">
-                                        <span>{title}</span>
+                                    <div className="flex flex-1 items-center justify-between">
+                                        <span className="font-semibold">{title}</span>
                                         <button className="bg-red-400 p-1" onClick={() => removeCanvasElem(nftid)}>
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-3 h-3">
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -291,7 +301,7 @@ const CanvasEditor = () => {
                     </Flipper>
                     <div title="preview next">
                         { !nextElem.hasOwnProperty("id") ? null : (
-                            <div className={`flex items-center px-2 py-2 rounded-sm border-2 border-gray-600 bg-gray-100`}>
+                            <div className={`flex items-center px-2 py-2 rounded-sm border-2 border-blue-400 bg-slate-700`}>
                                 <div className="w-12 h-12 text-lg bg-gray-100 relative">
                                     <img src={nextElem.url} alt={nextElem.id} className="w-full h-full"/>
                                     <div className="absolute w-full h-full left-0 top-0">

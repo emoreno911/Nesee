@@ -10,7 +10,7 @@ function NestingEditorNode({ data }) {
 
     let selected = "border-blue-400 bg-slate-700 text-white";
     if (data.hasOwnProperty("isSelected") && data.isSelected)
-		selected = "border-orange-400 bg-orange-100 text-black";
+		selected = "border-blue-600 bg-blue-200 text-black";
 
     const handleImageError = (evt) => {
         evt.currentTarget.src = fallbackNoImage;

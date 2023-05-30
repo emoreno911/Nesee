@@ -103,7 +103,7 @@ const NestingVizTree = ({ treeData, currentNode }) => {
             zoomOnScroll={false}
             panOnDrag={false}
             fitView
-            className="bg-white"
+            className="bg-darkdeep"
         />
     );
 };

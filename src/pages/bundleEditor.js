@@ -157,7 +157,7 @@ function BundleEditor() {
 
     return (
         <Layout>
-            <h2 className="text-gray-100 font-bold text-xl my-4">
+            <h2 className="text-gray-100 font-semibold text-xl my-4">
                 Bundle Editor
             </h2>
             <div

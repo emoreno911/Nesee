@@ -22,9 +22,9 @@ function Wallet() {
 
     return (
         <Layout>
-            <h3 className="text-gray-500 font-bold text-xl mt-4">
+            <h3 className="text-gray-100 font-semibold text-xl mt-4">
                 <span>Account</span>{" "}
-                <small className="text-sm">({account.addressShort})</small>
+                <small className="text-yellow-600 text-md">({account.addressShort})</small>
             </h3>
             { tokens }
         </Layout>

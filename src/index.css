@@ -28,7 +28,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f3f4f6;
+  background-color: #1e293b;
   /* background: linear-gradient(179deg, rgb(4 14 38) 0%, rgb(15 27 56) 45%, rgb(14 26 56) 100%); */
   color: var(--bgtext);
   /* overflow: hidden; */

@@ -5,9 +5,9 @@ const boxEmoji = "📦";
 const puzzleEmoji = "🧩";
 
 function NestingVizNode({ data }) {
-    let highlight = "border-stone-400 bg-white";
+    let highlight = "border-blue-400 bg-slate-700 text-white";
     if (data.hasOwnProperty("isHighlight") && data.isHighlight)
-		highlight = "border-pink-400 bg-pink-100";
+		highlight = "border-blue-600 bg-blue-200 text-black";
 
     return (
         <div
@@ -19,7 +19,7 @@ function NestingVizNode({ data }) {
                 </div>
                 <div className="ml-2">
                     <div className="text-lg font-bold">#{data.tokenId}</div>
-                    <div className="text-gray-500">{data.collectionId}</div>
+                    <div className="text-gray-400">{data.collectionId}</div>
                 </div>
             </div>
 
