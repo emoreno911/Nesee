@@ -3,7 +3,7 @@ import SideMenu from "./SideMenu";
 
 function Layout({ children }) {
     return (
-        <div className="bg-gray-100 font-sans w-full min-h-screen m-0">
+        <div className="bg-slate-800 font-sans w-full min-h-screen m-0">
             <Header />
 
             <div className="lg:container mx-auto flex flex-col sm:flex-row">

@@ -52,6 +52,9 @@ button.bg-blue-unique:hover {
 .bg-darkmode {
   background-color: var(--darkmode);
 }
+.bg-darkdeep {
+  background-color: var(--darkmode);
+}
 
 .font-raleway {
   font-family: 'Raleway', 'Segoe UI', 'Roboto', 'Oxygen',

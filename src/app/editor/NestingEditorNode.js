@@ -4,13 +4,13 @@ import { fallbackNoImage } from "../utils";
 
 
 function NestingEditorNode({ data }) {
-    let highlight = "border-stone-400 bg-white";
+    let highlight = "border-blue-400 bg-slate-700 text-white";
     if (data.hasOwnProperty("isHighlight") && data.isHighlight)
-		highlight = "border-pink-400 bg-pink-100";
+		highlight = "border-pink-400 bg-pink-100 text-black";
 
-    let selected = "border-stone-400 bg-white";
+    let selected = "border-blue-400 bg-slate-700 text-white";
     if (data.hasOwnProperty("isSelected") && data.isSelected)
-		selected = "border-orange-400 bg-orange-100";
+		selected = "border-orange-400 bg-orange-100 text-black";
 
     const handleImageError = (evt) => {
         evt.currentTarget.src = fallbackNoImage;
@@ -19,7 +19,7 @@ function NestingEditorNode({ data }) {
 
     return (
         <div
-            className={`px-4 py-2 shadow-md rounded-md border-2 ${highlight} ${selected}`}
+            className={`px-4 py-2 shadow-md rounded-md border-2 ${selected} ${highlight}`}
         >
             <div className="flex items-center">
                 {/* <div className="rounded-full w-12 h-12 text-lg flex justify-center items-center bg-gray-100">

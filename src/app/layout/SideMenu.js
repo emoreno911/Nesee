@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 function NavLink({ to, children }) {
     return (
         <Link to={to}>
-            <div className="flex items-center text-gray-600 text-md font-bold hover:text-pink-600 mb-6">
+            <div className="flex items-center text-gray-100 text-md font-bold hover:text-blue-500 mb-6">
                 {children}
             </div>
         </Link>
@@ -62,7 +62,7 @@ function SideMenu() {
             <li>
                 <a 
                     target="_blank"
-                    className="flex items-center text-gray-600 text-md font-bold hover:text-pink-600 mb-6"
+                    className="flex items-center text-gray-100 text-md font-bold hover:text-blue-500 mb-6"
                     href="https://internal-snapper-d3d.notion.site/e444e81bb3444290a0bf5a0a3795ab8f?v=de1f6145f9624097a75d7d6fbd211ab3"
                 >
                     <svg

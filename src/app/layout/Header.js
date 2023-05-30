@@ -4,7 +4,7 @@ import AccountSwitch from "./AccountSwitch";
 function NavLink({ to, children }) {
     return (
         <Link to={to}>
-            <span className="block text-gray-800 text-sm font-semibold hover:text-pink-600 mb-2 sm:mb-0 mr-4">
+            <span className="block text-gray-100 text-sm font-semibold hover:text-blue-400 mb-2 sm:mb-0 mr-4">
                 {children}
             </span>
         </Link>
@@ -24,12 +24,12 @@ function NavbarMenu({ hidden = true }) {
 
 function Header() {
     return (
-        <div className="bg-white shadow">
+        <div className="bg-darkdeep shadow">
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between py-4">
                     <Link to="/">
                         <div className="flex items-center">
-                            <span className="font-raleway text-4xl font-bold text-gray-900" title="font: Raleway Heavy">
+                            <span className="font-raleway text-4xl font-bold text-gray-100" title="font: Raleway Heavy">
                                 NES 
                             </span>
                             <img

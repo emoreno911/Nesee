@@ -100,15 +100,19 @@ function EditorContainer({ account, setLoaderMessage }) {
     const nestAndRebuild = async (updatedTree, nestArgs) => {
         setBundle([])
         //console.log(data)
-        setLoaderMessage("Nesting token...")
-        const result = await nestTokens(account, nestArgs);
-        if (result !== null) {
-            setLoaderMessage("Token nested successfully...")
-            setBundle(updatedTree)
-        }
-        else {
-            setLoaderMessage("Something went wrong, try again!")
-        }
+       try {
+            setLoaderMessage("Nesting token...")
+            const result = await nestTokens(account, nestArgs);
+            if (result !== null) {
+                setLoaderMessage("Token nested successfully...")
+                setBundle(updatedTree)
+            }
+            else {
+                setLoaderMessage("Something went wrong, try again!")
+            }
+       } catch (error) {
+            setLoaderMessage("Something went wrong, refresh page!")
+       }
 
         setTimeout(() => {
             setLoaderMessage(null)
@@ -117,14 +121,18 @@ function EditorContainer({ account, setLoaderMessage }) {
 
     const unnestAndRebuild = async (updatedTree, nestArgs) => {
         setBundle([])
-        setLoaderMessage("Unnesting token...")
-        const result = await unNestTokens(account, nestArgs);
-        if (result !== null) {
-            setLoaderMessage("Token unnested successfully...")
-            setBundle(updatedTree)
-        }
-        else {
-            setLoaderMessage("Something went wrong, try again!")
+        try {
+            setLoaderMessage("Unnesting token...")
+            const result = await unNestTokens(account, nestArgs);
+            if (result !== null) {
+                setLoaderMessage("Token unnested successfully...")
+                setBundle(updatedTree)
+            }
+            else {
+                setLoaderMessage("Something went wrong, try again!")
+            }
+        } catch (error) {
+            setLoaderMessage("Something went wrong, refresh page!")
         }
 
         setTimeout(() => {
@@ -149,11 +157,11 @@ function BundleEditor() {
 
     return (
         <Layout>
-            <h2 className="text-gray-500 font-bold text-xl my-4">
+            <h2 className="text-gray-100 font-bold text-xl my-4">
                 Bundle Editor
             </h2>
             <div
-                className="w-full shadow-md border border-white bg-white rounded my-4"
+                className="w-full shadow-md bg-darkdeep rounded my-4"
                 style={{ height: "500px" }}
             >
                 { 
