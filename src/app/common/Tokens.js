@@ -19,14 +19,17 @@ function Tokens({ owner, collectionIds }) {
     if (isLoading) return <Loader />;
     if (error) return <EmptyState style="mx-8" message={error.message} />;
 
+    const count = data ? data.tokens.count : 0;
+    const tokens = data ? data.tokens.data : [];
+
     return (
         <div className="flex flex-wrap -mx-4">
             <EmptyState
                 style="mx-8"
                 message="No Tokens available!"
-                condition={data.tokens.count === 0}
+                condition={count === 0}
             />
-            {data.tokens.data.map((obj) => (
+            {tokens.map((obj) => (
                 <TokenCard key={obj.token_name} data={obj} />
             ))}
         </div>

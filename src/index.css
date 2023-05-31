@@ -55,6 +55,9 @@ button.bg-blue-unique:hover {
 .bg-darkdeep {
   background-color: var(--darkmode);
 }
+.z-10000 {
+  z-index: 10000;
+}
 
 .font-raleway {
   font-family: 'Raleway', 'Segoe UI', 'Roboto', 'Oxygen',
@@ -289,4 +292,11 @@ code {
   padding: 10px 8px;
   border-radius: 5px;
   margin-top: 5px;
+}
+
+.pattern-polka {
+  background-color: #e5e5f7;
+  opacity: 1;
+  background-image: radial-gradient(#3f5881 0.5px, #1e293b 0.5px);
+  background-size: 20px 20px;
 }

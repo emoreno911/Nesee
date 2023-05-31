@@ -23,7 +23,8 @@
     "react-uuid": "^2.0.0",
     "reactflow": "^11.7.0",
     "uuidv4": "^6.2.13",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "web3.storage": "^4.5.4"
   },
   "scripts": {
     "start": "react-scripts start",

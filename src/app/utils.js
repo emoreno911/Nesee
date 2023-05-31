@@ -74,5 +74,11 @@ export const unrollBundle = (bundle) => {
 export const isDynamicBackground = (collectionId, attributes) => {
     const attr = Object.keys(attributes).map(k => attributes[k]).find(attr => attr.name._ === "type")
 
-    return parseInt(collectionId) === 1589 && attr.value._ === "background";
+    return parseInt(collectionId) === 1647 && attr.value._ === "background";
+}
+
+export const isComposableBundle = (collectionId, attributes) => {
+    const attr = Object.keys(attributes).map(k => attributes[k]).find(attr => attr.name._ === "type")
+
+    return parseInt(collectionId) === 1647 && attr.value._ === "none";
 }

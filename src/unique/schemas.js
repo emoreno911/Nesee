@@ -57,6 +57,10 @@ export const composableCollectionSchema = {
             enumValues: {
                 0: { _: "none" },
                 1: { _: "background" },
+                2: { _: "body" },
+                3: { _: "eyes" },
+                4: { _: "mouth" },
+                5: { _: "hat" },
             },
         },
         1: {

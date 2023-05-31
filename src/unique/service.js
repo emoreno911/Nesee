@@ -1,8 +1,13 @@
+import axios from "axios";
 import Sdk from "@unique-nft/sdk";
+import { Web3Storage } from 'web3.storage';
 import { KeyringProvider } from "@unique-nft/accounts/keyring";
 import { SchemaTools } from "@unique-nft/schemas";
 import { baseNetworkURL } from "../app/utils";
 import { composableCollectionSchema, composablePropertyPermissions, staticCollectionSchema, tokenPermissions } from "./schemas";
+import { graphqlEndpoint, collectionsFilterQuery } from "./queries";
+
+const storageClient = new Web3Storage({ token: process.env.REACT_APP_WEB3STORAGE_KEY });
 
 export const getWalletClient = (account) => {
     //const account = accounts[currentAccountIndex];
@@ -56,6 +61,18 @@ export const getBundleInfo = async (account, collectionId, tokenId) => {
     });
 
     return bundleInfo;
+};
+
+export const getCollectionsInfo = async (filter) => {
+    const response = await axios({
+        url: graphqlEndpoint,
+        method: "POST",
+        data: {
+            query: collectionsFilterQuery(filter),
+        },
+    });
+
+    return response.data.data;
 };
 
 export const createStaticCollection = async (account) => {
@@ -196,7 +213,7 @@ export const setNftProperties = async (
     );
 
     if (error) {
-        console.log("Error occurred while minting. ", error);
+        console.log("Error occurred while updating. ", error);
         return null;
     }
 
@@ -330,4 +347,30 @@ export const sendAirdrop = async (dest) => {
     };
     const transferResult = await sdk.balance.transfer.submitWaitResult(transferArgs);
     return transferResult.parsed;
+}
+
+export const uploadFile = async (file) => {
+    const client = new Sdk({ baseUrl: 'https://rest.unique.network/opal/v1' });
+    // const file = fs.readFileSync(`./your_picture.png`);
+    const { fullUrl, cid } = await client.ipfs.uploadFile({ file });
+    console.log({ fullUrl, cid })
+    return { fullUrl, cid };
+}
+
+export const uploadJSONFile = async (jsonContent) => {
+    const json = JSON.stringify(jsonContent);
+	const blob = new Blob([json], { type: 'application/json' });
+	const file = new File([ blob ], 'file.json', { type: 'application/json' });
+
+    const rootCid = await storageClient.put([file]);
+	console.log(rootCid);
+    return rootCid;
+}
+
+export const getJSONContent = async (cid) => {
+    const _cid = "bafybeif4cdvelodl5ioaqtgmvrsoq7ot4bguyjrgbscua3eepcwgjmjixa";
+    const res = await storageClient.get(cid);
+    const files = await res.files();
+    const textData = await files[0].text();
+    return JSON.parse(textData);
 }

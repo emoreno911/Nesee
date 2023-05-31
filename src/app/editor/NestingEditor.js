@@ -1,8 +1,5 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import ReactFlow, {
-    addEdge,
-    ConnectionLineType,
-    useReactFlow,
     Panel,
     MiniMap,
     useNodesState,
@@ -258,7 +255,7 @@ const NestingEditor = ({ treeData, nestAndRebuild, unnestAndRebuild }) => {
         );
     };
 
-    const bundleSelected = () => {
+    const validBundleSelected = () => {
         if (currentNode === null) return false;
         return currentNode.data.isBundle;
     };
@@ -312,7 +309,7 @@ const NestingEditor = ({ treeData, nestAndRebuild, unnestAndRebuild }) => {
                     {currentNode !== null ? (
                         <a 
                             className={strokeButtonStyle}
-                            href={`#/detail/token/${currentNode.data.collectionId}_${currentNode.data.tokenId}`}
+                            href={`#/detail/${currentNode.data.isBundle ? "bundle" : "token"}/${currentNode.data.collectionId}_${currentNode.data.tokenId}`}
                             target="_blank"
                         >
                             Detail Page
@@ -337,9 +334,9 @@ const NestingEditor = ({ treeData, nestAndRebuild, unnestAndRebuild }) => {
                             <span>Unnest</span>
                         </Button>
                     ) : null}
-                    <div className={bundleSelected() ? "inline" : "hidden"}>
+                    {/* <div className={validBundleSelected() ? "inline" : "hidden"}>
                         <ModalCustomize />
-                    </div>
+                    </div> */}
                 </Panel>
             </ReactFlow>
         );

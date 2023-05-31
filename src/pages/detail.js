@@ -1,18 +1,20 @@
+import _ from "lodash";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDatacontext } from "../app/context";
-import { fallbackNoImage, isDynamicBackground, unrollBundle } from "../app/utils";
-import { getTokenDetailInfo, setNftProperties } from "../unique/service";
+import { fallbackNoImage, isComposableBundle, isDynamicBackground, unrollBundle } from "../app/utils";
+import { getCollectionsInfo, getTokenDetailInfo, setNftProperties } from "../unique/service";
 import Layout from "../app/layout";
 import NestingVizTree from "../app/common/NestingVizTree";
 import Loader from "../app/common/Loader";
 import Button from "../app/common/Button";
 import { backgrounds } from "../unique/data";
+import ModalCustomize from "../app/customizer/ModalCustomize";
 
 function Detail() {
     const {
         data: { accounts, currentAccountIndex },
-        fn: { setLoaderMessage },
+        fn: { setLoaderMessage, setCurrentNode },
     } = useDatacontext();
 
     const { type, tokenInfo } = useParams();
@@ -37,12 +39,23 @@ function Detail() {
             type
         );
 
-        console.log(bundleInfo);
         setTokenDetail(tokenDetail);
-        //unroll(bundleInfo);
 
-        const arr = unrollBundle(bundleInfo);
-        setBundleInfo(arr);
+        const bundle = unrollBundle(bundleInfo);
+        const uniqCollections = _.uniq(bundle.map(o => o.collectionId));
+        const {collections} = await getCollectionsInfo(uniqCollections);
+        const collectionsInfo = collections ? collections.data : [];
+
+        const elems = bundle.map(el => {
+            const collection = collectionsInfo.find(c => c.collection_id === el.collectionId)
+            el.id = `${el.collectionId}_${el.tokenId}`;
+            el.title = `${collection.token_prefix} #${el.tokenId}`;
+            el.url = el.image;
+            return el
+        })
+
+        setBundleInfo(elems)
+        setCurrentNode({data:{...tokenDetail, isBundle: type === 'bundle'}})
     };
 
     const updateLiveBackground = async () => {
@@ -104,7 +117,9 @@ function Detail() {
                             {tokenDetail.collection.tokenPrefix} #{tokenId}
                         </div>
                         <div className="text-gray-100 my-4">
-                            <span>{tokenDetail.collection.name}</span>{" "}
+                            <a href={`https://uniquescan.io/opal/collections/${collectionId}`} target="_blank">
+                                <span>{tokenDetail.collection.name}</span>
+                            </a>{" "}
                             <span>({collectionId})</span>
                         </div>
 
@@ -146,6 +161,12 @@ function Detail() {
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M9.348 14.651a3.75 3.75 0 010-5.303m5.304 0a3.75 3.75 0 010 5.303m-7.425 2.122a6.75 6.75 0 010-9.546m9.546 0a6.75 6.75 0 010 9.546M5.106 18.894c-3.808-3.808-3.808-9.98 0-13.789m13.788 0c3.808 3.808 3.808 9.981 0 13.79M12 12h.008v.007H12V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                                     </svg>
                                 </Button>                                   
+                            )}
+                        </div>
+
+                        <div className="mt-4">  
+                            {!isComposableBundle(collectionId, tokenDetail.attributes) ? "" : (
+                                <ModalCustomize />                                  
                             )}
                         </div>
                     </div>

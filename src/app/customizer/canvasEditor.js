@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
 import _ from "lodash";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 import { Flipper, Flipped } from 'react-flip-toolkit';
 import { useDatacontext } from "../context";
-import { getBundleInfo } from "../../unique/service";
-import { unrollBundle } from "../utils";
-import Button from "../common/Button";
+import { dataURItoBlob, unrollBundle } from "../utils";
 import { graphqlEndpoint, tokensQueryB } from "../../unique/queries";
+import { getBundleInfo, getJSONContent, setNftProperties, uploadFile, uploadJSONFile, getCollectionsInfo } from "../../unique/service";
+import Button from "../common/Button";
 
 
 const CanvasEditor = () => {
@@ -18,34 +18,61 @@ const CanvasEditor = () => {
     const { selectedObjects, editor, onReady } = useFabricJSEditor();
 
     const {
-        data: { accounts, currentAccountIndex, currentNode }
+        data: { accounts, currentAccountIndex, currentNode },
+        fn: { setLoaderMessage }
     } = useDatacontext()
 
     useEffect(() => {
         if (!editor) return;
 
-        //updateData();
-        getDemoElements();
+        updateData();
+        //getDemoElements();
     }, [currentNode]);
 
     const updateData = async () => {
         const account = accounts[currentAccountIndex];
-        const { collectionId, tokenId, isBundle } = currentNode.data;
+        const { collectionId, tokenId, isBundle, attributes } = currentNode.data;
 
         if (isBundle) {
             const bundle = await getBundleInfo(account, collectionId, tokenId);
-            const data = unrollBundle(bundle);
+            const _data = unrollBundle(bundle);
+            const data = _data.filter((o, i) => i !== 0); // remove the first item, the bundle
             console.log("data", data);
 
-            const els = data.map(el => {
+            const uniqCollections = _.uniq(data.map(o => o.collectionId));
+            const {collections} = await getCollectionsInfo(uniqCollections);
+            const collectionsInfo = collections ? collections.data : [];
+
+            const elems = data.map(el => {
+                const collection = collectionsInfo.find(c => c.collection_id === el.collectionId)
                 el.id = `${el.collectionId}_${el.tokenId}`;
-                el.title = `${el.collectionId}#${el.tokenId}`;
+                el.title = `${collection.token_prefix} #${el.tokenId}`;
                 el.url = el.image;
+    
+                // find the attribute named "type"
+                //el.type = el.attributes[0].value._ // the easy way if attr[0] == type
+                const attr = Object.keys(el.attributes).map(k => el.attributes[k]).find(attr => attr.name._ === "type")
+                el.type = attr ? attr.value._ : 'none'
+    
                 return el
             })
-            setElems(els);
-            //clearCanvas();
-        }  
+    
+            const groupedElems = _.groupBy(elems, 'type')
+            setElems(groupedElems)
+            clearCanvas();
+        }
+
+        // get and set composition data
+        const attr = attributes ? Object.keys(attributes).map(k => attributes[k]).find(attr => attr.name._ === "composition") : null;
+        if (attr) {
+            const composition = attr.value._ ;
+            const json = await getJSONContent(composition)
+            console.log(json)
+            editor.canvas.loadFromJSON(json, () => {
+                editor.canvas.renderAll();
+            });
+            updateCanvasItems(json.objects);
+        }
     }
 
     const getDemoElements = async () => {
@@ -73,10 +100,6 @@ const CanvasEditor = () => {
 
         const groupedElems = _.groupBy(elems, 'type')
         setElems(groupedElems)
-    }
-
-    const showElems = () => {
-        console.log(editor.canvas.toObject())
     }
 
     const clearCanvas = () => {
@@ -109,16 +132,18 @@ const CanvasEditor = () => {
         return result;
     }
 
-    const saveJSON = () => {
+    const saveJSON = async () => {
         const result = getJSON();
         const b64result = btoa(JSON.stringify(result));
         window.localStorage.setItem("bundle", b64result);
         console.log("saved to local storage", b64result);
     }
 
-    const loadJSON = () => {
-        const res = window.localStorage.getItem("bundle");
-        const json = JSON.parse(atob(res));
+    const loadJSON = async () => {
+        // const res = window.localStorage.getItem("bundle");
+        // const json = JSON.parse(atob(res));
+        const json = await getJSONContent('bafybeia4ahxe7tceholhid7vexxpemdyznzmaoqhulpzszx5krq66iu5y4')
+        console.log(json)
         editor.canvas.loadFromJSON(json, () => {
             editor.canvas.renderAll();
         });
@@ -212,10 +237,34 @@ const CanvasEditor = () => {
         //updateCanvasItems(res);
     }
 
-    const updateBundle = () => {
-        // const imgB64 = editor.canvas.toDataURL('png');
-        // const json = getJSON();
-        // const b64Json = btoa(JSON.stringify(json));
+    const updateBundle = async () => {
+        const account = accounts[currentAccountIndex];
+        const { collectionId, tokenId } = currentNode.data;
+        
+        setLoaderMessage("uploading file...")
+        const json = getJSON();
+        const jsonCid = await uploadJSONFile(json);
+        //const jsonCid = "bafybeihsr3xuml7osqvq5s2n3b4jmkhk7utrin2b7bnq7vnsuugtxbmwei"
+
+        setLoaderMessage("uploading image...")
+        const imgB64 = editor.canvas.toDataURL('png');
+        const [blob, mime] = dataURItoBlob(imgB64);
+        const {cid:ipfsCid} = await uploadFile(blob);
+        //const ipfsCid = "Qme7xCNCDTVLugQYBci1J75EmW4SdJWcoPRbW832XdjvnT"
+
+        console.log('Updating properties...', tokenId)
+        setLoaderMessage("updating properties...")
+        const result = await setNftProperties(
+            account,
+            collectionId,
+            tokenId,
+            [
+                { key: "a.2", value: `{"_":"${jsonCid}"}` },
+                { key: "i.c", value: ipfsCid }
+            ]
+        )
+        console.log(result)
+        setLoaderMessage(null)   
     }
 
     return (
@@ -229,23 +278,19 @@ const CanvasEditor = () => {
                     Clear
                 </Button>
                 {" "}
+                <Button onClick={() => {}}>
+                    Redo
+                </Button>
+                {" "}
                 <Button onClick={() => exportImage()}>
                     Export
                 </Button>
-                {" "}
-                {/* <Button onClick={() => saveJSON()}>
-                    Save JSON
-                </Button>
-                {" "}
-                <Button onClick={() => loadJSON()}>
-                    Load JSON
-                </Button> */}
-                
+                {" "}                
                 <Button onClick={() => dynamicRegenerate()}>
                     Regenerate Live
                 </Button>
                 {" "}
-                <Button onClick={() => saveJSON()}>
+                <Button onClick={() => updateBundle()}>
                     Update Bundle
                 </Button>
             </div>
@@ -281,7 +326,7 @@ const CanvasEditor = () => {
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
                                         </svg>
                                     </button>
-                                    <button className="bg-purple-400 p-1 mr-1" onClick={() => layerDown(nftid)}>
+                                    <button className="bg-yellow-600 p-1 mr-1" onClick={() => layerDown(nftid)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-3 h-3">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                                         </svg>
