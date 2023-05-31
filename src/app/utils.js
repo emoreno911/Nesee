@@ -2,7 +2,7 @@ export const ipfsBundleImage = "QmY3XC4Twr62QcMz2StdQZsrrffYKuyimscfM6acA6yCwf";
 export const ipfsTicketImage = "Qmbw957mpvrK6ARp1Uq7taLYRCJaakuaw3p42bAZkPDv9Z";
 export const fallbackNoImage = "/images/noimage.svg";
 export const strokeButtonStyle =
-    "bg-white text-gray-700 uppercase font-bold text-xs py-1 px-3 mr-1 rounded-sm border border-gray-700";
+    "bg-white text-gray-700 uppercase font-bold text-xs py-1 px-3 mr-1 rounded-sm border border-gray-700 hover:bg-blue-100";
 
 export const appMetadata = {
     name: "NESEE",
@@ -74,11 +74,11 @@ export const unrollBundle = (bundle) => {
 export const isDynamicBackground = (collectionId, attributes) => {
     const attr = Object.keys(attributes).map(k => attributes[k]).find(attr => attr.name._ === "type")
 
-    return parseInt(collectionId) === 1647 && attr.value._ === "background";
+    return parseInt(collectionId) === 1648 && attr.value._ === "background";
 }
 
 export const isComposableBundle = (collectionId, attributes) => {
     const attr = Object.keys(attributes).map(k => attributes[k]).find(attr => attr.name._ === "type")
 
-    return parseInt(collectionId) === 1647 && attr.value._ === "none";
+    return parseInt(collectionId) === 1648 && attr.value._ === "root";
 }

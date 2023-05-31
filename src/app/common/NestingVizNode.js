@@ -22,7 +22,7 @@ function NestingVizNode({ data }) {
                 </div>
                 <div className="ml-2">
                     <div className="text-lg font-bold">
-                        <a href={`#/detail/token/${data.id}`} target="_blank">{data.title}</a>
+                        <a href={`#/detail/${data.isBundle ? "bundle" : "token"}/${data.id}`} target="_blank">{data.title}</a>
                     </div>
                     {data.isBundle ? (
                         <span className="inline-block px-2 py-1 leading-none bg-pink-200 text-pink-800 rounded-lg font-semibold uppercase tracking-wide text-xs">

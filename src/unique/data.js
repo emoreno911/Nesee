@@ -30,7 +30,7 @@ export const partsComposable = [
     //{type: 5, ipfs: "QmaXH2iwZ7Po7UkzTxDQvsBaEobUjzs1RTzRiK6hgMNaJB", title:"Irish Hat" },
     {type: 1, ipfs: "QmSwfJJnhmAseGTaki1Z8ao6jG8k9pp9nSyXkeHaYqYGMM", title: "Day Background", },
     {type: 1, ipfs: "QmZKn9dM8sR74AT5W27EoUCkdTKSJijbVRiQwhL3DXvg7X", title: "Afternoon Background"},
-    {type: 1, ipfs: "Qma4oDMs4CLmcYamCXjJMRgP7Str9E8xvE4jGhMggpfrUd", title: "Night Background"}, 
+    //{type: 1, ipfs: "Qma4oDMs4CLmcYamCXjJMRgP7Str9E8xvE4jGhMggpfrUd", title: "Night Background"}, 
     {type: 0, ipfs: "QmQCYzPwa5N4T4GGY4r5P7ybAPsiZ5YeNpzX6ikw8JAjfW", title: "Bundle Container"},
     {type: 0, ipfs: "QmQCYzPwa5N4T4GGY4r5P7ybAPsiZ5YeNpzX6ikw8JAjfW", title: "Bundle Container"}, 
 ]

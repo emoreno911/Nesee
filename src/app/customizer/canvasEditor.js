@@ -63,6 +63,11 @@ const CanvasEditor = () => {
         }
 
         // get and set composition data
+        redo()
+    }
+
+    const redo = async () => {
+        const { attributes } = currentNode.data;
         const attr = attributes ? Object.keys(attributes).map(k => attributes[k]).find(attr => attr.name._ === "composition") : null;
         if (attr) {
             const composition = attr.value._ ;
@@ -278,7 +283,7 @@ const CanvasEditor = () => {
                     Clear
                 </Button>
                 {" "}
-                <Button onClick={() => {}}>
+                <Button onClick={() => redo()}>
                     Redo
                 </Button>
                 {" "}

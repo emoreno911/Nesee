@@ -55,12 +55,12 @@ export const composableCollectionSchema = {
             optional: false,
             isArray: false,
             enumValues: {
-                0: { _: "none" },
+                0: { _: "root" },
                 1: { _: "background" },
                 2: { _: "body" },
                 3: { _: "eyes" },
                 4: { _: "mouth" },
-                5: { _: "hat" },
+                5: { _: "hat" }
             },
         },
         1: {

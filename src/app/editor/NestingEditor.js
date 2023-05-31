@@ -298,7 +298,7 @@ const NestingEditor = ({ treeData, nestAndRebuild, unnestAndRebuild }) => {
                 zoomOnScroll={true}
                 panOnDrag={true}
                 fitView
-                className="bg-darkdeep"
+                className="bg-darkdeep pattern-polka-dark"
                 onNodeClick={onNodeClick}
                 onNodeDragStart={onNodeDragStart}
                 onNodeDrag={onNodeDrag}
