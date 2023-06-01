@@ -169,6 +169,12 @@ function Detail() {
                                 <ModalCustomize />                                  
                             )}
                         </div>
+
+                        <div className="mt-4">
+                            <Button onClick={() => alert("it's useless!")}>
+                                <span>Useless button</span>
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
