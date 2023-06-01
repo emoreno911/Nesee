@@ -2,7 +2,7 @@
 
 ### An user-friendly experience to customize NFT bundles
 
-NESEE is the evolution of the Nes3D project built for the Web3athon 2023
+NESEE is the evolution of the Nes3D project, now built for the Web3athon 2023
 
 - Sponsor: Polkadot
 - Challenge: Unique Network
@@ -13,7 +13,7 @@ The fast evolution of new technologies in the blockchain ecosystem demands the c
 
 The lack of user-friendly tools can make it difficult for first-time encounters with NFTs in any of their variations and limit their widespread adoption, as well as the use of new technologies.
 
-## NESEE Functionalities
+## NESEE Features
 
 With Nesse you'll have the opportunity to create bundles of NFTs in a very friendly way, for this you only have to drag and drop the elements contained within your wallet and group the NFTs as you see fit.
 
