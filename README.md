@@ -2,7 +2,7 @@
 
 ### An user-friendly experience to customize NFT bundles
 
-NESEE is the evolution of the Nes3D project, now built for the Web3athon 2023 _#BUIDLtheFuture_
+NESEE is the evolution of the Nes3D project, now using the Unique Network SDK and built for the Web3athon 2023 _#BUIDLtheFuture_
 
 - Sponsor: Polkadot
 - Challenge: Unique Network
@@ -25,7 +25,9 @@ In the second, once the wallet is connected, you will be able to view all the NF
 
 <img src="https://github.com/emoreno911/Nesee/blob/main/public/screen/editor.png?raw=true" alt="image" />
 
-With the editor you will be able to generate a new image for your bundles using the images of the children for the composition, you also have available the options to rotate, move or change the size of the elements within the composition as well as the reorganization of these as layers .
+With the editor you will be able to generate a new image for your bundles using the images of the children for the composition, you also have available the options to rotate, move or change the size of the elements within the composition as well as the reorganization of these as layers. 
+
+**Important**: Only the NFTs with the `type` attribute set to `root` are the ones who can be composed with its children images
 
 <img src="https://github.com/emoreno911/Nesee/blob/main/public/screen/customizer.png?raw=true" alt="image" />
 
