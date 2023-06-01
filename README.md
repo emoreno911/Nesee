@@ -1,70 +1,37 @@
-# Getting Started with Create React App
+# NESEE
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### An user-friendly experience to customize NFT bundles
 
-## Available Scripts
+NESEE is the evolution of the Nes3D project built for the Web3athon 2023
 
-In the project directory, you can run:
+- Sponsor: Polkadot
+- Challenge: Unique Network
 
-### `npm start`
+## The Problem
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The fast evolution of new technologies in the blockchain ecosystem demands the creation of tools that facilitate their intuitive use. One of the recent technologies in the field of NFTs has to do with the nesting and customization of them.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The lack of user-friendly tools can make it difficult for first-time encounters with NFTs in any of their variations and limit their widespread adoption, as well as the use of new technologies.
 
-### `npm test`
+## NESEE Functionalities
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+With Nesse you'll have the opportunity to create bundles of NFTs in a very friendly way, for this you only have to drag and drop the elements contained within your wallet and group the NFTs as you see fit.
 
-### `npm run build`
+There are two ways to customize and interact with your bundles, in the first you simply connect your wallet and select the bundle you want to see in detail, then on the detail screen you can see the bundle diagram with its associated NFTs and by pressing the customize button you access the editor where you can create and associate a new image using the images of the children.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+In the second, once the wallet is connected, you will be able to view all the NFTs contained in your wallet as a diagram where the children of the bundles are also shown. With this interface you will be able to create new bundles or edit the existing ones just by dragging and dropping the elements of the diagram. From here you can also customize the image associated with the bundles using the images of the children to make the composition.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+With the editor you will be able to generate a new image for your bundles using the images of the children for the composition, you also have available the options to rotate, move or change the size of the elements within the composition as well as the reorganization of these as layers .
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+When updating the bundle image, the new image will be uploaded to the Unique Network decentralized storage and will be linked to the bundle image attribute. Then a new attribute will be updated or added, this one contains the `ipfsId` of a JSON document with the information about the composition of the bundle image (eg. associated images, rotation, dimensions).
 
-### `npm run eject`
+## How is it built?
+Nesee is made with ReactJS and the Unique Network SDK. For the interactive diagrams we use React flow and for the image bundle editor FabricJS.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Challenges
+One of the most significant challenges arose when we tried to add interactivity and ease of use to the mechanics of creating/manipulating the bundles, because despite the fact that we already had the objective of implementing drag and drop, the representation of the elements in a diagram was not something we got to the first time. 
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Another interesting challenge was to establish how to regenerate the image of the bundle and that it could be manipulated for future editions since at the time of editing elements that were moved from the bundle could be missing, that's where we agreed to preserve certain attributes of the NFTs within the composition string in order to avoid these drawbacks.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Accomplishments
+Present a intuitive way to interact and customize NFT bundles
