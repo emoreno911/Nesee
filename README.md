@@ -7,6 +7,10 @@ NESEE is the evolution of the [Nes3D](https://github.com/emoreno911/Nes3D) proje
 - Sponsor: Polkadot
 - Challenge: Unique Network
 
+*Website*: https://nesee.netlify.app/
+
+*Demo*: https://youtu.be/__zArno_a2s
+
 ## The Problem
 
 The fast evolution of new technologies in the blockchain ecosystem demands the creation of tools that facilitate their intuitive use. One of the recent technologies in the field of NFTs has to do with the nesting and customization of them.
