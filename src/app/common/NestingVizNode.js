@@ -39,12 +39,12 @@ function NestingVizNode({ data }) {
             <Handle
                 type="target"
                 position={Position.Top}
-                className="w-16 !bg-teal-500"
+                className="!bg-blue-500"
             />
             <Handle
                 type="source"
                 position={Position.Bottom}
-                className="w-16 !bg-teal-500"
+                className="!bg-blue-500"
             />
         </div>
     );
