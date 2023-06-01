@@ -2,7 +2,7 @@
 
 ### An user-friendly experience to customize NFT bundles
 
-NESEE is the evolution of the Nes3D project, now built for the Web3athon 2023
+NESEE is the evolution of the Nes3D project, now built for the Web3athon 2023 _#BUIDLtheFuture_
 
 - Sponsor: Polkadot
 - Challenge: Unique Network
