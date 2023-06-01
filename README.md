@@ -2,7 +2,7 @@
 
 ### An user-friendly experience to customize NFT bundles
 
-NESEE is the evolution of the Nes3D project, now using the Unique Network SDK and built for the Web3athon 2023 _#BUIDLtheFuture_
+NESEE is the evolution of the [Nes3D](https://github.com/emoreno911/Nes3D) project, now using the Unique Network SDK and built for the Web3athon 2023 _#BUIDLtheFuture_
 
 - Sponsor: Polkadot
 - Challenge: Unique Network
