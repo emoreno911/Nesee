@@ -19,9 +19,15 @@ With Nesse you'll have the opportunity to create bundles of NFTs in a very frien
 
 There are two ways to customize and interact with your bundles, in the first you simply connect your wallet and select the bundle you want to see in detail, then on the detail screen you can see the bundle diagram with its associated NFTs and by pressing the customize button you access the editor where you can create and associate a new image using the images of the children.
 
+<img src="https://github.com/emoreno911/Nesee/blob/main/public/screen/detail.jpeg?raw=true" alt="image" />
+
 In the second, once the wallet is connected, you will be able to view all the NFTs contained in your wallet as a diagram where the children of the bundles are also shown. With this interface you will be able to create new bundles or edit the existing ones just by dragging and dropping the elements of the diagram. From here you can also customize the image associated with the bundles using the images of the children to make the composition.
 
+<img src="https://github.com/emoreno911/Nesee/blob/main/public/screen/editor.png?raw=true" alt="image" />
+
 With the editor you will be able to generate a new image for your bundles using the images of the children for the composition, you also have available the options to rotate, move or change the size of the elements within the composition as well as the reorganization of these as layers .
+
+<img src="https://github.com/emoreno911/Nesee/blob/main/public/screen/customizer.png?raw=true" alt="image" />
 
 When updating the bundle image, the new image will be uploaded to the Unique Network decentralized storage and will be linked to the bundle image attribute. Then a new attribute will be updated or added, this one contains the `ipfsId` of a JSON document with the information about the composition of the bundle image (eg. associated images, rotation, dimensions).
 
