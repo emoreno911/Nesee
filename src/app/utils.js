@@ -2,7 +2,7 @@ export const ipfsBundleImage = "QmY3XC4Twr62QcMz2StdQZsrrffYKuyimscfM6acA6yCwf";
 export const ipfsTicketImage = "Qmbw957mpvrK6ARp1Uq7taLYRCJaakuaw3p42bAZkPDv9Z";
 export const fallbackNoImage = "/images/noimage.svg";
 export const strokeButtonStyle =
-    "bg-white text-gray-700 uppercase font-bold text-xs py-1 px-3 mr-1 rounded-sm border border-gray-700 hover:bg-blue-100";
+    "bg-white text-gray-700 uppercase font-bold font-sans text-xs py-1 px-3 mr-1 rounded-sm border border-gray-700 hover:bg-blue-100";
 
 export const appMetadata = {
     name: "NESEE",
@@ -39,8 +39,8 @@ export const unrollBundle = (bundle) => {
                 nestingChildTokens,
                 image: { fullUrl },
             } = el;
-            
-			const isBundle = el.hasOwnProperty("nestingChildTokens");
+
+            const isBundle = el.hasOwnProperty("nestingChildTokens");
             if (isBundle) getNodes(nestingChildTokens, collectionId, tokenId);
 
             arr.push({
@@ -63,7 +63,7 @@ export const unrollBundle = (bundle) => {
         parentCollection: 0,
         parentId: 0,
         isBundle: true,
-		image: bundle.image.fullUrl
+        image: bundle.image.fullUrl,
     });
     // get children nodes
     getNodes(bundle.nestingChildTokens, bundle.collectionId, bundle.tokenId);
@@ -72,13 +72,17 @@ export const unrollBundle = (bundle) => {
 };
 
 export const isDynamicBackground = (collectionId, attributes) => {
-    const attr = Object.keys(attributes).map(k => attributes[k]).find(attr => attr.name._ === "type")
-
+    const attr = Object.keys(attributes)
+        .map((k) => attributes[k])
+        .find((attr) => attr.name._ === "type");
+    if (typeof attr === "undefined") return false;
     return parseInt(collectionId) === 1648 && attr.value._ === "background";
-}
+};
 
 export const isComposableBundle = (collectionId, attributes) => {
-    const attr = Object.keys(attributes).map(k => attributes[k]).find(attr => attr.name._ === "type")
-
+    const attr = Object.keys(attributes)
+        .map((k) => attributes[k])
+        .find((attr) => attr.name._ === "type");
+    if (typeof attr === "undefined") return false;
     return parseInt(collectionId) === 1648 && attr.value._ === "root";
-}
+};

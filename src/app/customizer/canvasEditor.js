@@ -16,6 +16,7 @@ const CanvasEditor = () => {
     const [ nextElem, setNextElem ] = useState({});
     const [ elems, setElems ] = useState([]);
     const { selectedObjects, editor, onReady } = useFabricJSEditor();
+    const [ redoData, setRedoData ] = useState(null);
 
     const {
         data: { accounts, currentAccountIndex, currentNode },
@@ -26,7 +27,6 @@ const CanvasEditor = () => {
         if (!editor) return;
 
         updateData();
-        //getDemoElements();
     }, [currentNode]);
 
     const updateData = async () => {
@@ -70,41 +70,20 @@ const CanvasEditor = () => {
         const { attributes } = currentNode.data;
         const attr = attributes ? Object.keys(attributes).map(k => attributes[k]).find(attr => attr.name._ === "composition") : null;
         if (attr) {
-            const composition = attr.value._ ;
-            const json = await getJSONContent(composition)
+            let json = redoData !== null ? JSON.parse(redoData) : {};
+            
+            if (!json.hasOwnProperty('objects')) {
+                const composition = attr.value._ ;
+                json = await getJSONContent(composition)
+                setRedoData(JSON.stringify(json))
+            }
+            
             console.log(json)
             editor.canvas.loadFromJSON(json, () => {
                 editor.canvas.renderAll();
             });
             updateCanvasItems(json.objects);
         }
-    }
-
-    const getDemoElements = async () => {
-        const response = await axios({
-            url: graphqlEndpoint,
-            method: "POST",
-            data: {
-                query: tokensQueryB(null, [1575]), //1589,1575
-            },
-        });
-    
-        const res = response.data.data;
-        const elems = res.tokens.data.map(el => {
-            el.id = `${el.collection_id}_${el.token_id}`;
-            el.title = `${el.token_name}`;
-            el.url = el.image.fullUrl;
-
-            // find the attribute named "type"
-            //el.type = el.attributes[0].value._ // the easy way if attr[0] == type
-            const attr = Object.keys(el.attributes).map(k => el.attributes[k]).find(attr => attr.name._ === "type")
-            el.type = attr ? attr.value._ : 'none'
-
-            return el
-        })
-
-        const groupedElems = _.groupBy(elems, 'type')
-        setElems(groupedElems)
     }
 
     const clearCanvas = () => {
@@ -177,7 +156,7 @@ const CanvasEditor = () => {
             oImg.nftid = id; 
             oImg.title = title;
             oImg.nftype = type;
-            //oImg.set({ height: 128 })
+            oImg.set({ scaleX: 0.5, scaleY:0.5 })
             editor.canvas.add(oImg); 
         },
         { crossOrigin: 'anonymous' }

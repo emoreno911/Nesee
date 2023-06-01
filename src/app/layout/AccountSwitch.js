@@ -22,7 +22,7 @@ function AccountSwitch({ fontSize = "sm" }) {
     if (accounts.length < 1) {
         return (
             <button 
-                className={`text-gray-800 text-${fontSize} font-semibold border px-4 py-2 rounded-lg hover:text-pink-600 hover:border-pink-600`}
+                className={`text-${fontSize} bg-white text-gray-700 uppercase font-bold text-xs py-1 px-3 rounded-sm border border-gray-700 hover:bg-blue-100`}
                 onClick={handleWalletConnect}
             >
                 Connect Wallet
