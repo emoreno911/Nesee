@@ -10,6 +10,7 @@ import Loader from "../app/common/Loader";
 import Button from "../app/common/Button";
 import { backgrounds } from "../unique/data";
 import ModalCustomize from "../app/customizer/ModalCustomize";
+import { strokeButtonStyle } from "../app/utils";
 
 function Detail() {
     const {
@@ -116,12 +117,23 @@ function Detail() {
                         <div className="text-gray-100 font-bold text-4xl">
                             {tokenDetail.collection.tokenPrefix} #{tokenId}
                         </div>
-                        <div className="text-gray-100 my-4">
+                        <div className="text-gray-100 my-3">
                             <a href={`https://uniquescan.io/opal/collections/${collectionId}`} target="_blank">
                                 <span>{tokenDetail.collection.name}</span>
                             </a>{" "}
                             <span>({collectionId})</span>
+                            <div className="text-blue-300 text-xs">
+                                <span>Check on uniquescan:</span>{" "}
+
+                                <a className={''} href={`https://uniquescan.io/opal/collections/${collectionId}`} target="_blank">
+                                    <span>[Collection]</span>
+                                </a>{" "}
+                                <a className={''} href={`https://uniquescan.io/opal/tokens/${collectionId}/${tokenId}`} target="_blank">
+                                    <span>[Token]</span>
+                                </a>{" "}
+                            </div>
                         </div>
+                        
 
                         <div className="mb-1">
                             <span className="inline-block py-1 leading-none text-yellow-600 uppercase tracking-wide text-xs">
@@ -168,12 +180,6 @@ function Detail() {
                             {!isComposableBundle(collectionId, tokenDetail.attributes) ? "" : (
                                 <ModalCustomize />                                  
                             )}
-                        </div>
-
-                        <div className="mt-4">
-                            <Button onClick={() => alert("it's useless!")}>
-                                <span>Useless button</span>
-                            </Button>
                         </div>
                     </div>
                 </div>
