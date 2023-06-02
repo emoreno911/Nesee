@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Modal from "../layout/Modal";
 import Button from "../common/Button";
-import CanvasEditor from "./CanvasEditor";
+import CanvasEditor from "./canvasEditor";
 
 const ModalCustomize = () => {
     const [isShow, setIsShow] = useState(false);
