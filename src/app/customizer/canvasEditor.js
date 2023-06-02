@@ -1,12 +1,10 @@
 import _ from "lodash";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 import { Flipper, Flipped } from 'react-flip-toolkit';
 import { useDatacontext } from "../context";
 import { dataURItoBlob, unrollBundle } from "../utils";
-import { graphqlEndpoint, tokensQueryB } from "../../unique/queries";
 import { getBundleInfo, getJSONContent, setNftProperties, uploadFile, uploadJSONFile, getCollectionsInfo } from "../../unique/service";
 import Button from "../common/Button";
 

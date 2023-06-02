@@ -1,159 +1,15 @@
-import axios from "axios";
-import _ from "lodash";
-import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
 import { useDatacontext } from "../app/context";
-import { collectionsFilterQuery, graphqlEndpoint, tokensQuery } from "../unique/queries";
 import Layout from "../app/layout";
-import EmptyState from "../app/common/EmptyState";
-import NestingEditor from "../app/editor/NestingEditor";
-import { getBundleInfo, nestTokens, unNestTokens } from "../unique/service";
-import { unrollBundle } from "../app/utils";
+import EditorContainer from "../app/editor/EditorContainer";
 
-const getCollectionsInfo = async (filter) => {
-    const response = await axios({
-        url: graphqlEndpoint,
-        method: "POST",
-        data: {
-            query: collectionsFilterQuery(filter),
-        },
-    });
-
-    return response.data.data;
-}
-
-
-function EditorContainer({ account, setLoaderMessage }) {
-    const owner = account.address;
-    const [dataAvailable, setDataAvailable] = useState(false);
-    const [bundle, setBundle] = useState([]);
-    const { data, isLoading, error } = useQuery("tokens", async () => {
-        if (dataAvailable) return;
-        return axios({
-            url: graphqlEndpoint,
-            method: "POST",
-            data: {
-                query: tokensQuery(owner),
-            },
-        }).then((response) => response.data.data);
-    });
-
-    useEffect(() => {
-        if (!data) return;
-
-        if (dataAvailable) return;
-
-        const _data = data.tokens.data.map(o => {
-            const tokenId = o.token_id;
-            const collectionId = o.collection_id;
-            const parentCollection = 0;
-            const parentId = 0;
-            const isBundle = o.children_count > 0;
-            const tokenName = o.token_name;
-            const image = o.image.fullUrl;
-            const nodeId = `${collectionId}_${tokenId}`;
-            return { nodeId, tokenName, tokenId, collectionId, parentCollection, parentId, isBundle, image }
-        })
-
-        const _bundles = _data.filter(o => o.isBundle).map(o => getBundleInfo(account, o.collectionId, o.tokenId));
-        Promise.all(_bundles).then(values => {
-            let arr = [];
-            values.forEach(bundle => {
-                const b = unrollBundle(bundle);
-                const c = b.map(o => {
-                    o.nodeId = `${o.collectionId}_${o.tokenId}`;
-                    return o;
-                })
-                // include tokenname with unionBy
-                arr = [...arr, ...c]
-            })
-
-            const res = _.unionBy(arr, _data, 'nodeId')
-            console.log('arr', res)
-            
-            const uniqCollections = _.uniq(res.map(o => o.collectionId));
-            getCollectionsInfo(uniqCollections)
-            .then(response => {
-                if (!response.collections) return;
-
-                const x = res.map(o => {
-                    const c = response.collections.data.find(c => c.collection_id === o.collectionId)
-                    o.tokenName = `${c.token_prefix} #${o.tokenId}`;
-                    return o;
-                })
-
-                setBundle(res)
-                setDataAvailable(true)                
-            })
-            .catch(err => {
-                console.log("error", err)
-            })
-   
-        })
-
-        //setBundle(_data);
-    }, [data])
-
-    if (isLoading) return null;
-    if (error) return <EmptyState style="mx-8" message={error.message} />;
-
-    const nestAndRebuild = async (updatedTree, nestArgs) => {
-        setBundle([])
-        //console.log(data)
-       try {
-            setLoaderMessage("Nesting token...")
-            const result = await nestTokens(account, nestArgs);
-            if (result !== null) {
-                setLoaderMessage("Token nested successfully...")
-                setBundle(updatedTree)
-            }
-            else {
-                setLoaderMessage("Something went wrong, try again!")
-            }
-       } catch (error) {
-            setLoaderMessage("Something went wrong, refresh page!")
-       }
-
-        setTimeout(() => {
-            setLoaderMessage(null)
-        }, 1500);
-    }
-
-    const unnestAndRebuild = async (updatedTree, nestArgs) => {
-        setBundle([])
-        try {
-            setLoaderMessage("Unnesting token...")
-            const result = await unNestTokens(account, nestArgs);
-            if (result !== null) {
-                setLoaderMessage("Token unnested successfully...")
-                setBundle(updatedTree)
-            }
-            else {
-                setLoaderMessage("Something went wrong, try again!")
-            }
-        } catch (error) {
-            setLoaderMessage("Something went wrong, refresh page!")
-        }
-
-        setTimeout(() => {
-            setLoaderMessage(null)
-        }, 1500);
-    }
-
-    return (
-        <NestingEditor 
-            treeData={bundle} 
-            nestAndRebuild={nestAndRebuild} 
-            unnestAndRebuild={unnestAndRebuild}
-        />
-    )
-}
 
 function BundleEditor() {
     const {
         data: { accounts, currentAccountIndex },
         fn: { setLoaderMessage },
     } = useDatacontext();
+
+    const editorHeight = "500px";
 
     return (
         <Layout>
@@ -162,13 +18,16 @@ function BundleEditor() {
             </h2>
             <div
                 className="w-full shadow-md bg-darkdeep rounded my-4"
-                style={{ height: "500px" }}
+                style={{ height: editorHeight }}
             >
-                { 
-                    accounts.length > 0 ? 
-                        <EditorContainer account={accounts[currentAccountIndex]} setLoaderMessage={setLoaderMessage} /> 
-                        : <div></div> 
-                }
+                {accounts.length > 0 ? (
+                    <EditorContainer
+                        account={accounts[currentAccountIndex]}
+                        setLoaderMessage={setLoaderMessage}
+                    />
+                ) : (
+                    <div></div>
+                )}
             </div>
         </Layout>
     );
