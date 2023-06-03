@@ -7,7 +7,7 @@ NESEE is the evolution of the [Nes3D](https://github.com/emoreno911/Nes3D) proje
 - Sponsor: Polkadot
 - Challenge: Unique Network
 
-*Website*: https://nesee.netlify.app/
+*Website*: https://nesee.vercel.app/
 
 *Demo*: https://youtu.be/__zArno_a2s
 
@@ -25,17 +25,17 @@ There are two ways to customize and interact with your bundles, in the first you
 
 <img src="https://github.com/emoreno911/Nesee/blob/main/public/screen/detail.jpeg?raw=true" alt="image" />
 
-In the second, once the wallet is connected, you will be able to view all the NFTs contained in your wallet as a diagram where the children of the bundles are also shown. With this interface you will be able to create new bundles or edit the existing ones just by dragging and dropping the elements of the diagram. From here you can also customize the image associated with the bundles using the images of the children to make the composition.
+In the second you have to click in the `Bundle Editor` link, once the wallet is connected you will be able to view all the NFTs contained in your wallet as a diagram where the children of the bundles are also shown. With this interface you will be able to create new bundles or edit the existing ones just by dragging and dropping the elements of the diagram. From here you can also customize the image associated with the bundles using the images of the children to make the composition, just press the `Detail Page` button and then access the customizer.
 
 <img src="https://github.com/emoreno911/Nesee/blob/main/public/screen/editor.png?raw=true" alt="image" />
 
 With the editor you will be able to generate a new image for your bundles using the images of the children for the composition, you also have available the options to rotate, move or change the size of the elements within the composition as well as the reorganization of these as layers. 
 
-**Important**: Only the NFTs with the `type` attribute set to `root` are the ones who can be composed with its children images
+**Important**: Only the NFTs with the `type` attribute set to `root` are the ones who can be customized with its children images. You can recognize this "Bundle Containers" because they have a _green cube_ icon next to its title
 
 <img src="https://github.com/emoreno911/Nesee/blob/main/public/screen/customizer.png?raw=true" alt="image" />
 
-When updating the bundle image, the new image will be uploaded to the Unique Network decentralized storage and will be linked to the bundle image attribute. Then a new attribute will be updated or added, this one contains the `ipfsId` of a JSON document with the information about the composition of the bundle image (eg. associated images, rotation, dimensions).
+When updating the bundle image, the new image will be uploaded to the Unique Network decentralized storage and will be linked to the bundle image attribute. Then the attribute named `composition` will be updated, this one contains the `ipfsId` of a JSON document with the information about the composition of the bundle image (eg. associated images, rotation, dimensions).
 
 ## How is it built?
 Nesee is made with ReactJS and the Unique Network SDK. For the interactive diagrams we use React flow and for the image bundle editor FabricJS.

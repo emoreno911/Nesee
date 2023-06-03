@@ -307,31 +307,3 @@ code {
   background-image: radial-gradient(#2f4261 0.5px, #0a1635 0.5px);
   background-size: 20px 20px;
 }
-
-@keyframes shakeX {
-  from,
-  to {
-    transform: translate3d(0, 0, 0);
-  }
-
-  10%,
-  30%,
-  50%,
-  70%,
-  90% {
-    transform: translate3d(-10px, 0, 0);
-  }
-
-  20%,
-  40%,
-  60%,
-  80% {
-    transform: translate3d(10px, 0, 0);
-  }
-}
-
-.shakeX {
-  animation-duration: 1;
-  animation-fill-mode: both;
-  animation-name: shakeX;
-}
