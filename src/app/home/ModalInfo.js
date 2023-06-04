@@ -87,7 +87,7 @@ const ModalInfo = () => {
                 <div className="text-sm">
                     <Title>What is NESEE?</Title>
                     <Text>
-                        NESEE is a tool designed to bring a new user-friendly experience to customize NFT bundles
+                    NESEE is a tool designed to bring a new user-friendly experience to customize and interact with NFT bundles.
                     </Text>
 
                     <Title>What NESEE do?</Title>
