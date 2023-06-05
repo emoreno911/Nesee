@@ -1,31 +1,26 @@
 export const graphqlEndpoint = "https://api-opal.uniquescan.io/v1/graphql";
 
 export const collectionsQuery = (owner) =>
-    `query {
-        collections(
-          where: {
-            _or: [
-              {owner_normalized: {_eq: "${owner}"}},
-                {tokens: {owner_normalized: {_eq: "${owner}"}}},
-            ]
-          },
-          order_by: {collection_id: asc}
-          offset: 0
-          limit: 10
-        ) {
-          count
-          timestamp
-          data {
-            collection_id
-            type
-            token_prefix
-            name
-            collection_cover
-            description
-          }
-        }
-      }
-    `;
+`query {
+  collections(
+    where: {
+      owner_normalized: {_eq: "${owner}"}
+    },
+    order_by: {collection_id: asc}
+    offset: 0
+    limit: 10
+  ) {
+    count
+    timestamp
+    data {
+      collection_id
+      token_prefix
+      name
+      collection_cover
+    }
+  }
+}
+`;
 
 export const collectionsFilterQuery = (filter) =>
     `query {

@@ -5,7 +5,7 @@ import { KeyringProvider } from "@unique-nft/accounts/keyring";
 import { SchemaTools } from "@unique-nft/schemas";
 import { baseNetworkURL } from "../app/utils";
 import { composableCollectionSchema, composablePropertyPermissions, staticCollectionSchema, tokenPermissions } from "./schemas";
-import { graphqlEndpoint, collectionsFilterQuery } from "./queries";
+import { graphqlEndpoint, collectionsFilterQuery, collectionsQuery } from "./queries";
 
 const storageClient = new Web3Storage({ token: process.env.REACT_APP_WEB3STORAGE_KEY });
 
@@ -61,6 +61,18 @@ export const getBundleInfo = async (account, collectionId, tokenId) => {
     });
 
     return bundleInfo;
+};
+
+export const getCollectionsByOwner = async (owner) => {
+    const response = await axios({
+        url: graphqlEndpoint,
+        method: "POST",
+        data: {
+            query: collectionsQuery(owner),
+        },
+    });
+
+    return response.data.data;
 };
 
 export const getCollectionsInfo = async (filter) => {

@@ -6,7 +6,6 @@ import Loader from "./Loader";
 import CollectionCard from "./CollectionCard";
 
 function Collections({ owner }) {
-    console.log(owner, Date.now());
     const { data, isLoading, error } = useQuery("collections", () => {
         return axios({
             url: graphqlEndpoint,
@@ -20,14 +19,17 @@ function Collections({ owner }) {
     if (isLoading) return <Loader />;
     if (error) return <EmptyState style="mx-8" message={error.message} />;
 
+    const count = data ? data.collections.count : 0;
+    const collections = data ? data.collections.data : [];
+
     return (
         <div className="flex flex-wrap -mx-4">
             <EmptyState
                 style="mx-8"
                 message="No Collections available!"
-                condition={data.collections.count === 0}
+                condition={count === 0}
             />
-            {data.collections.data.map((obj) => (
+            {collections.map((obj) => (
                 <CollectionCard key={obj.collection_id} data={obj} />
             ))}
         </div>

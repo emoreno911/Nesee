@@ -5,6 +5,7 @@ import DataContextProvider from './app/context';
 import Detail from './pages/detail';
 import Home from './pages/home';
 import Playground from './pages/playground';
+import CollectionsPage from './pages/collections';
 import FullLoader from './app/layout/FullLoader';
 import BundleEditor from './pages/bundleEditor';
 import Wallet from './pages/wallet';
@@ -22,6 +23,7 @@ function App() {
                   <Route path="/playground" render={(props) => <Playground {...props} />} />
                   <Route path="/bundle-editor" render={(props) => <BundleEditor {...props} />} />
                   <Route path="/wallet" render={(props) => <Wallet {...props} />} />
+                  <Route path="/collections/:collectionId?" render={(props) => <CollectionsPage {...props} />} />
               </Switch>
           </HashRouter>
           <FullLoader />

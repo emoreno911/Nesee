@@ -56,13 +56,14 @@ export const unrollBundle = (bundle) => {
     };
 
     // set main node
+    console.log(bundle)
     arr.push({
         attributes: bundle.attributes,
         tokenId: bundle.tokenId,
         collectionId: bundle.collectionId,
         parentCollection: 0,
         parentId: 0,
-        isBundle: true,
+        isBundle: bundle.nestingChildTokens.length > 0,
         image: bundle.image.fullUrl,
     });
     // get children nodes
