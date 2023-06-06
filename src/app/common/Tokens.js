@@ -17,7 +17,7 @@ function Tokens({ owner, collectionIds }) {
     });
 
     if (isLoading) return <Loader />;
-    if (error) return <EmptyState style="mx-8" message={error.message} />;
+    if (error) return <EmptyState style="mx-5" message={error.message} />;
 
     const count = data ? data.tokens.count : 0;
     const tokens = data ? data.tokens.data : [];
@@ -25,7 +25,7 @@ function Tokens({ owner, collectionIds }) {
     return (
         <div className="flex flex-wrap -mx-4">
             <EmptyState
-                style="mx-8"
+                style="mx-5"
                 message="No Tokens available!"
                 condition={count === 0}
             />

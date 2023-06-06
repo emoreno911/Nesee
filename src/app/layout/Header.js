@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import AccountSwitch from "./AccountSwitch";
+import ModalInfo from "../home/ModalInfo";
 
 function NavLink({ to, children }) {
     return (
@@ -45,6 +46,7 @@ function Header() {
                     </div>
 
                     <div className="hidden sm:flex sm:items-center">
+                        <ModalInfo />
                         <AccountSwitch />
                     </div>
 

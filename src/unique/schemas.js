@@ -112,3 +112,41 @@ export const composablePropertyPermissions = [
         },
     },
 ];
+
+export const buildComposableCollectionSchema = (coverIpfs, types = []) => {
+    let typeValues = {};
+    types.forEach((value, index) => { typeValues[index] = {_: value} });
+
+    return {
+        schemaName: "unique",
+        schemaVersion: "1.0.0",
+    
+        image: { urlTemplate: "https://ipfs.unique.network/ipfs/{infix}" },
+        coverPicture: {
+            ipfsCid: coverIpfs,
+        },
+    
+        attributesSchemaVersion: "1.0.0",
+        attributesSchema: {
+            0: {
+                name: { _: "type" },
+                type: "string",
+                optional: false,
+                isArray: false,
+                enumValues: typeValues,
+            },
+            1: {
+                name: { _: "name" },
+                type: "string",
+                optional: true,
+                isArray: false,
+            },
+            2: {
+                name: { _: "composition" },
+                type: "string",
+                optional: true,
+                isArray: false,
+            },
+        },
+    }
+}

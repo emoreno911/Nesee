@@ -17,7 +17,7 @@ function Collections({ owner }) {
     });
 
     if (isLoading) return <Loader />;
-    if (error) return <EmptyState style="mx-8" message={error.message} />;
+    if (error) return <EmptyState style="mx-5" message={error.message} />;
 
     const count = data ? data.collections.count : 0;
     const collections = data ? data.collections.data : [];
@@ -25,7 +25,7 @@ function Collections({ owner }) {
     return (
         <div className="flex flex-wrap -mx-4">
             <EmptyState
-                style="mx-8"
+                style="mx-5"
                 message="No Collections available!"
                 condition={count === 0}
             />

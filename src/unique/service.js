@@ -4,8 +4,8 @@ import { Web3Storage } from 'web3.storage';
 import { KeyringProvider } from "@unique-nft/accounts/keyring";
 import { SchemaTools } from "@unique-nft/schemas";
 import { baseNetworkURL } from "../app/utils";
-import { composableCollectionSchema, composablePropertyPermissions, staticCollectionSchema, tokenPermissions } from "./schemas";
 import { graphqlEndpoint, collectionsFilterQuery, collectionsQuery } from "./queries";
+import { buildComposableCollectionSchema, composableCollectionSchema, composablePropertyPermissions, staticCollectionSchema, tokenPermissions } from "./schemas";
 
 const storageClient = new Web3Storage({ token: process.env.REACT_APP_WEB3STORAGE_KEY });
 
@@ -87,6 +87,36 @@ export const getCollectionsInfo = async (filter) => {
     return response.data.data;
 };
 
+export const getCollectionById = async (account, collectionId) => {
+    const { sdk, address } = getWalletClient(account);
+    const response = await  sdk.collection.get({collectionId});
+    return response;
+}
+
+export const hasNeseeSchema = async (account, collectionId) => {
+    const { sdk, address } = getWalletClient(account);
+    const response = await  sdk.collection.get({collectionId});
+    console.log(response)
+    try {
+        // check if the collection has the NESEE schema
+        const [attr0, attr1, attr2,] = response.properties;
+        const cond0 = attr0.value.indexOf('"_":"type"') !== -1;
+        const cond1 = attr1.value.indexOf('"_":"name"') !== -1;
+        const cond2 = attr2.value.indexOf('"_":"composition"') !== -1;
+
+        const cond3 = response.tokenPropertyPermissions.find(o => o.key === "a.2").permission.mutable;
+        const cond4 = response.tokenPropertyPermissions.find(o => o.key === "i.c").permission.mutable;
+        
+        const { enumValues } = response.schema.attributesSchema[0];
+        const arr = Object.keys(enumValues).map(k => enumValues[k]._) 
+        console.log(arr)
+
+        return (cond0 && cond1 && cond2 && cond3 && cond4)
+    } catch (err) {
+        return false
+    }
+}
+
 export const createStaticCollection = async (account) => {
     const { sdk, address } = getWalletClient(account);
     const [name, description, tokenPrefix] = [
@@ -122,23 +152,18 @@ export const createStaticCollection = async (account) => {
     return collectionId;
 };
 
-export const createComposableCollection = async (account) => {
+export const createComposableCollection = async (account, { name, description, symbol, types, coverIpfs }) => {
     const { sdk, address } = getWalletClient(account);
-    const [name, description, tokenPrefix] = [
-        "Nes Composable",
-        "Nesee updateable collection",
-        "NCOM",
-    ];
+    const schema = buildComposableCollectionSchema(coverIpfs, types);
 
     console.log("creating dynamic collection...");
-
     const { error, parsed } = await sdk.collection.create.submitWaitResult(
         {
             address,
             name,
             description,
-            tokenPrefix,
-            schema: composableCollectionSchema,
+            tokenPrefix: symbol,
+            schema,
             permissions: tokenPermissions,
             tokenPropertyPermissions: composablePropertyPermissions,
         },
@@ -363,7 +388,6 @@ export const sendAirdrop = async (dest) => {
 
 export const uploadFile = async (file) => {
     const client = new Sdk({ baseUrl: 'https://rest.unique.network/opal/v1' });
-    // const file = fs.readFileSync(`./your_picture.png`);
     const { fullUrl, cid } = await client.ipfs.uploadFile({ file });
     console.log({ fullUrl, cid })
     return { fullUrl, cid };

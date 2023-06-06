@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import ModalInfo from "../home/ModalInfo";
 
 function NavLink({ to, children }) {
     return (
@@ -78,9 +77,6 @@ function SideMenu() {
 
                     <span>Bundle Editor</span>
                 </NavLink>
-            </li>
-            <li>
-                <ModalInfo />
             </li>
             <li>
                 <a

@@ -20,7 +20,7 @@ const ModalInfo = () => {
             handleShow={setIsShow}
             activator={({ handleShow }) => (
                 <button
-                    className="flex items-center text-gray-100 text-md font-bold hover:text-blue-500 mb-6"
+                    className="flex items-center text-gray-100 text-md font-bold hover:text-blue-500 mr-4"
                     onClick={() => handleShow(true)}
                 >
                     <svg
@@ -29,7 +29,7 @@ const ModalInfo = () => {
                         viewBox="0 0 24 24"
                         strokeWidth={1.5}
                         stroke="currentColor"
-                        className="w-6 h-6 mr-2"
+                        className="w-7 h-7 mr-1"
                     >
                         <path
                             strokeLinecap="round"
@@ -38,7 +38,7 @@ const ModalInfo = () => {
                         />
                     </svg>
 
-                    <span>Basic Info</span>
+                    <span>Info</span>
                 </button>
             )}
         >

@@ -1,7 +1,7 @@
 const EmptyState = ({ message, condition, style = "" }) => {
     return condition ? (
         <div
-            className={`flex items-center text-lg my-5 text-gray-400 ${style}`}
+            className={`flex items-center text-lg my-10 text-gray-400 ${style}`}
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"

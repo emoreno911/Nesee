@@ -6,9 +6,9 @@ export const collectionsQuery = (owner) =>
     where: {
       owner_normalized: {_eq: "${owner}"}
     },
-    order_by: {collection_id: asc}
+    order_by: {collection_id: desc}
     offset: 0
-    limit: 10
+    limit: 50
   ) {
     count
     timestamp
@@ -28,9 +28,9 @@ export const collectionsFilterQuery = (filter) =>
           where: {
             collection_id: {_in: ${JSON.stringify(filter)}}
           },
-          order_by: {collection_id: asc}
+          order_by: {collection_id: desc}
           offset: 0
-          limit: 10
+          limit: 50
         ) {
           count
           timestamp
