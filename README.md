@@ -9,6 +9,8 @@ NESEE is a tool designed to bring a new user-friendly experience to customize an
 
 *Demo*: https://youtu.be/__zArno_a2s
 
+*How to use it*: [Notion Docs](https://internal-snapper-d3d.notion.site/e444e81bb3444290a0bf5a0a3795ab8f?v=de1f6145f9624097a75d7d6fbd211ab3)
+
 ## The Problem
 
 The fast evolution of new technologies in the blockchain ecosystem demands the creation of tools that facilitate their intuitive use. One of the recent technologies in the field of NFTs has to do with the nesting and customization of them.
