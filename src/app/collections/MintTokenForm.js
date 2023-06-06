@@ -4,12 +4,14 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import { FileUploader } from "react-drag-drop-files";
 import { ImageIcon } from "../icons";
 import { useDatacontext } from "../context";
-import { hasNeseeSchema, uploadFile } from "../../unique/service";
+import { hasNeseeSchema, getCollectionById, uploadFile, mintComposableNft } from "../../unique/service";
 import { dataURItoBlob, formFieldStyle, strokeButtonStyle } from "../utils";
 
 function MintTokenForm() {
-    const  [ hasCompatibleSchema, setHasCompatibleSchema ] = useState(false);
-    const [image, setImage] = useState(null);
+    const [ elemTypes, setElemTypes ] = useState([]);
+    const [ hasCompatibleSchema, setHasCompatibleSchema ] = useState(false);
+    const [ image, setImage ] = useState(null);
+    const [ imageError, setImageError ] = useState("");
     const { collectionId } = useParams(); 
 
     const {
@@ -24,18 +26,59 @@ function MintTokenForm() {
     }, [collectionId])
 
     const checkSchema = async () => {
-        const response = await hasNeseeSchema(account, collectionId);
-        console.log(response)
-        setHasCompatibleSchema(response)
+        const isComposable = await hasNeseeSchema(account, collectionId);
+        setHasCompatibleSchema(isComposable)
+        if (isComposable) {
+            const collection = await getCollectionById(account, collectionId);
+            const { enumValues } = collection.schema.attributesSchema[0];
+            const _elemTypes = Object.keys(enumValues).map(k => enumValues[k]._) 
+            setElemTypes(_elemTypes);
+        }
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async (values) => {
+        const account = accounts[currentAccountIndex];
 
+        setLoaderMessage("uploading image...")
+        let ipfsCid = "Qme7wwEENK7mzBFGyQUvKVCfxxiDGyo19W2xt9bjUoo1pF"
+        if (image) {
+            const [blob, mime] = dataURItoBlob(image); 
+            const {cid} = await uploadFile(blob);
+            ipfsCid = cid;
+        }
+
+        setLoaderMessage("minting nft...")
+        const { type, name } = values;
+        const data = {name, ipfsCid, type: parseInt(type), _collectionId: collectionId}
+        const result = await mintComposableNft(account, data);
+
+        if (result !== null) {
+            alert(`Token ${result} created sucessfully!`)
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+        else {
+            alert("An error occurred!")
+        }
+
+        setLoaderMessage(null)
     }
 
-    const handleValidate = () => {
+    const handleValidate = (values) => {
+        const errors = {};
 
-    }
+        if (image === null) {
+            const err = "You should add an image to upload";
+            errors.image = err;
+            setImageError(err);
+        }
+        else {
+            setImageError("")
+        }
+
+        return errors;
+    };
 
     const handleImageChange = (image) => {
         const reader = new FileReader();
@@ -85,32 +128,32 @@ function MintTokenForm() {
             <Formik
                     onSubmit={handleSubmit}
                     validate={handleValidate}
-                    initialValues={{ type: "", name: ""}}
+                    initialValues={{ type: 0, name: ""}}
                 >
                     <Form>
                         <div className="mb-4">
                             <div className="flex">
                                 <div className="w-2/3">
                                     <Field
-                                        className={`${formFieldStyle} mb-2`}
                                         name="type"
-                                        type="text"
-                                        placeholder="type (Max: 4 chars)"
-                                    />
-                                    <ErrorMessage
-                                        name="type"
-                                        render={(msg) => <Error>{msg}</Error>}
-                                    />
+                                        as="select"
+                                        className={formFieldStyle}
+                                    >
+                                        {
+                                            elemTypes.map((_type, index) => (
+                                                <option key={_type} value={index}>
+                                                    {_type}
+                                                </option>
+                                            ))
+                                        }
+                                    </Field>
                                     <Field
                                         className={formFieldStyle}
                                         name="name"
                                         type="text"
                                         placeholder="Name"
                                     />
-                                    <ErrorMessage
-                                        name="name"
-                                        render={(msg) => <Error>{msg}</Error>}
-                                    />
+                                    <Error>{imageError}</Error>
                                 </div>
                                 <div className="w-1/3 h-32 p-2">
                                     <ImageInput />

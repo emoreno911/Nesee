@@ -96,7 +96,6 @@ export const getCollectionById = async (account, collectionId) => {
 export const hasNeseeSchema = async (account, collectionId) => {
     const { sdk, address } = getWalletClient(account);
     const response = await  sdk.collection.get({collectionId});
-    console.log(response)
     try {
         // check if the collection has the NESEE schema
         const [attr0, attr1, attr2,] = response.properties;
@@ -106,10 +105,6 @@ export const hasNeseeSchema = async (account, collectionId) => {
 
         const cond3 = response.tokenPropertyPermissions.find(o => o.key === "a.2").permission.mutable;
         const cond4 = response.tokenPropertyPermissions.find(o => o.key === "i.c").permission.mutable;
-        
-        const { enumValues } = response.schema.attributesSchema[0];
-        const arr = Object.keys(enumValues).map(k => enumValues[k]._) 
-        console.log(arr)
 
         return (cond0 && cond1 && cond2 && cond3 && cond4)
     } catch (err) {
@@ -181,6 +176,40 @@ export const createComposableCollection = async (account, { name, description, s
     console.log("new collection", collectionId);
 
     return collectionId;
+};
+
+export const mintComposableNft = async (account, {type, name, ipfsCid, _collectionId} ) => {    
+    const { sdk, address } = getWalletClient(account);
+
+    const tokenProperties = SchemaTools.encodeUnique.token(
+        {
+            image: { ipfsCid },
+            encodedAttributes: {
+                0: type,
+                1: { _: name },
+            },
+        },
+        composableCollectionSchema
+    );
+
+    console.log("minting nft...");
+    const { error, parsed } = await sdk.token.create.submitWaitResult(
+        {
+            address,
+            collectionId: _collectionId,
+            properties: tokenProperties,
+        },
+        { signer: account }
+    );
+
+    if (error) {
+        console.log("Error occurred while minting. ", error);
+        return null;
+    }
+
+    const { collectionId, tokenId } = parsed;
+    console.log("new token", collectionId, tokenId);
+    return tokenId;
 };
 
 export const mintNft = async (account, _collectionId, ipfsCid, props, isComposable = false) => {

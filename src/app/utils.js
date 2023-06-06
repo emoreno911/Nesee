@@ -73,12 +73,33 @@ export const unrollBundle = (bundle) => {
     return arr;
 };
 
+const isComposableCollection = (attributes) => {
+    try {
+        // check if the collection has the NESEE schema
+        // const [attr0, attr1, attr2,] = attributes;
+        // const cond0 = attr0.value.indexOf('"_":"type"') !== -1;
+        // const cond1 = attr1.value.indexOf('"_":"name"') !== -1;
+        // const cond2 = attr2.value.indexOf('"_":"composition"') !== -1;
+
+        // const cond3 = response.tokenPropertyPermissions.find(o => o.key === "a.2").permission.mutable;
+        // const cond4 = response.tokenPropertyPermissions.find(o => o.key === "i.c").permission.mutable;
+
+        // return (cond0 && cond1 && cond2 && cond3 && cond4)
+    } catch (err) {
+        return false
+    }
+
+    console.log(attributes)
+    return true;
+}
+
 export const isDynamicBackground = (collectionId, attributes) => {
     const attr = Object.keys(attributes)
         .map((k) => attributes[k])
         .find((attr) => attr.name._ === "type");
     if (typeof attr === "undefined") return false;
-    return parseInt(collectionId) === 1648 && attr.value._ === "background";
+    //return parseInt(collectionId) === 1648 && attr.value._ === "background";
+    return attr.value._ === "background";
 };
 
 export const isComposableBundle = (collectionId, attributes) => {
@@ -86,5 +107,6 @@ export const isComposableBundle = (collectionId, attributes) => {
         .map((k) => attributes[k])
         .find((attr) => attr.name._ === "type");
     if (typeof attr === "undefined") return false;
-    return parseInt(collectionId) === 1648 && attr.value._ === "root";
+    //return parseInt(collectionId) === 1648 && attr.value._ === "root";
+    return attr.value._ === "root";
 };
